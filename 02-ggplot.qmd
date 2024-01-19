@@ -1,0 +1,103 @@
+---
+title: "Untitled"
+format: html
+---
+
+```{r}
+library(tidyverse)
+stat113_df <- read_csv("https://raw.githubusercontent.com/highamm/ds234_quarto/main/data_online/stat113.csv")
+
+stat113_df
+
+ggplot(data = stat113_df, aes(x = GPA)) +
+  geom_histogram(colour = "black", fill = "white",
+                 bins = 17)
+
+ggplot(data = stat113_df, aes(x = GPA)) +
+  geom_freqpoly(bins = 17)
+
+ggplot(data = stat113_df, aes(x = GPA)) +
+    geom_histogram(colour = "black", fill = "white", bins = 17) +
+    geom_freqpoly(bins = 15)
+```
+
+Exercise 1.
+
+```{r}
+## names(stat113_df) brings up the names of all variables
+```
+
+Exercises 2 and 3.
+
+```{r}
+ggplot(data = stat113_df, aes(x = GPA)) +
+  geom_histogram(colour = "dodgerblue4", fill = "dodgerblue1",
+                 bins = 17)
+
+ggplot(data = stat113_df, aes(x = GPA)) +
+  geom_histogram(colour = "violetred3",
+                 fill = "yellowgreen", bins = 17)
+```
+
+```{r}
+ggplot(data = stat113_df, aes(x = SocialMedia)) +
+  geom_bar()
+```
+
+Exercises 4 and 5
+
+```{r}
+ggplot(data = stat113_df, aes(x = Award)) +
+  geom_bar(colour = "burlywood3", fill = "bisque4")
+```
+
+
+```{r}
+ggplot(data = stat113_df, aes(x = Year, fill = SocialMedia)) +
+  geom_bar() 
+
+ggplot(data = stat113_df, aes(x = Year, fill = SocialMedia)) +
+  geom_bar(position = "fill") +
+  labs(y = "Proportion")
+```
+
+Exercise 6.
+
+```{r}
+ggplot(data = stat113_df, aes(x = Sex, fill = Sport)) +
+  geom_bar(position = "fill") +
+  labs(y = "Proportion")
+## a slightly higher proportion of male students played a 
+## a sport in this survey, compared to female students.
+```
+
+Exercises 7 and 8.
+
+```{r}
+ggplot(data = stat113_df, aes(x = Sport, y = Pulse)) +
+  geom_violin(colour = "lightpink4", fill = "lightpink")
+
+ggplot(data = stat113_df, aes(x = Award, y = Exercise)) +
+  geom_jitter(width = 0.10)
+```
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this 
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
