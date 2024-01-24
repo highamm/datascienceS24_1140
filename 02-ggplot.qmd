@@ -157,7 +157,90 @@ Class Exercise 6. Skip
 
 ## Your Turn
 
-Your Turn 2.
+Your Turn 1. See Handout.
+
+Your Turn 2 and 3.
+
+```{r}
+ggplot(data = stat113_df,
+       aes(x = Exercise, 
+           y = TV)) +
+  geom_point(aes(colour = Sport))
+
+ggplot(data = stat113_df,
+       aes(x = Exercise, 
+           y = TV)) +
+  geom_point() +
+  facet_wrap(~ Sport)
+```
+
+Your Turn 4
+
+```{r}
+ggplot(data = fitness_full,
+       aes(x = active_cals)) +
+  geom_freqpoly(aes(colour = weekend_ind))
+
+ggplot(data = fitness_full,
+       aes(x = active_cals)) +
+  geom_histogram() +
+  facet_wrap(~ weekend_ind, nrow = 2)
+```
+
+Your Turn 5
+
+The plot doesn't make sense because line plots are only useful if there is one value of y for each unique value of x.
+
+```{r}
+ggplot(data = stat113_df, aes(x = GPA,
+                              y = Exercise)) +
+  geom_line()
+## does not work because multiple students
+## can have the same GPA
+```
+
+Your Turn 6
+
+Those GPA values are missing values, likely from first-years filling out the survey.
+
+## Section 2.5
+
+## Section 2.6
+
+Class Exercises
+
+Class Exercise 1.
+
+```{r}
+ggplot(data = stat113_df, aes(x = Wgt,
+                              y = Hgt)) +
+  geom_point(aes(colour = Sport)) +
+  geom_smooth()
+```
+
+Moving colour to the local geom_point aesthetic means that we wil get a single smoother that ignores sport entirely.
+
+```{r}
+ggplot(data = stat113_df, aes(x = TV)) +
+  geom_histogram(colour = "black", fill = "white")
+```
+
+## Your Turn
+
+Your Turn 1
+
+a does not work: `lm` is not a variable in our data set so should not be used with `aes()`.
+
+b will work: the local `colour = "purple"` in `geom_point()` will override the global aesthetic of `colour = groupvar`
+
+neither c nor d will work: both have `colour = groupvar` not in an aesthetic function when it should be.
+
+e will work: any variable that's specified is surrounded by `aes()`.
+
+f will not work either: purple is not a variable in our data set so we should not use `aes()` in `geom_point()`
+
+
+
 
 
 
