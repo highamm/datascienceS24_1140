@@ -1,0 +1,87 @@
+---
+title: "Section 3: `dplyr`"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+```{r}
+library(babynames)
+library(tidyverse)
+```
+
+## Class Exercises 
+
+Class Exercise 1 and 2.
+
+```{r}
+babynames_m17 <- babynames |>
+  filter(sex == "M" & year == 2017) |>
+  arrange(desc(n)) |>
+  slice(1:10)
+
+ggplot(data = babynames_m17, aes(x = name, y = n)) +
+  geom_col()
+
+babynames_peter <- babynames |>
+  filter(name == "Peter" & sex == "M")
+
+ggplot(data = babynames_peter, aes(x = year, y = n)) +
+  geom_line()
+```
+
+Class Exercise 5.
+
+We cannot use the pipe with `mean()` because the first argument to the mean function is __not__ a data frame. 
+
+fitness_df |> summarise(mean_val = mean(distance))
+
+## Your Turn
+
+Your Turn 1
+
+```{r}
+## a
+babynames |> filter(year != 1945)
+
+## b
+babynames |> filter(n > 400 & n < 5000)
+
+## c
+babynames_mc <- babynames |>
+  filter((name == "Hilary" & sex == "F") |
+                      (name == "Monica" & sex == "F"))
+babynames_mc
+```
+
+Your Turn 2
+
+```{r}
+ggplot(data = babynames_mc, aes(x = year, y = n)) +
+  geom_line(aes(colour = name))
+```
+
+Your Turn 3
+
+```{r}
+babynames_5 <- babynames |> filter((name == "Matthew" & sex == "M") |
+                      (name == "Robin" & sex == "M") |
+                      (name == "Jessica" & sex == "F") |
+                      (name == "Michael" & sex == "M") |
+                      (name == "Ivan" & sex == "M"))
+ggplot(data = babynames_5, aes(x = year, y = n)) +
+  geom_line(aes(colour = name))
+```
+
+Your Turn 4
+
+```{r}
+babynames_02m <- babynames |>
+  filter(year == 2002 & sex == "M") |>
+  arrange(desc(n)) |>
+  slice(1:10)
+
+ggplot(data = babynames_02m, aes(x = name, y = prop)) +
+  geom_col()
+```
