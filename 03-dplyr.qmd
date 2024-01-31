@@ -85,3 +85,46 @@ babynames_02m <- babynames |>
 ggplot(data = babynames_02m, aes(x = name, y = prop)) +
   geom_col()
 ```
+
+## Section 3.3
+
+```{r}
+library(tidyverse)
+slumajors_df <- read_csv("https://raw.githubusercontent.com/highamm/ds234_quarto/main/data_online/SLU_Majors_17_21.csv")
+slumajors_df
+
+slumajors_df <- slumajors_df |>
+  mutate(ntotal = nfemales + nmales) |>
+  mutate(percfemale = 100 * nfemales / (nfemales + nmales))
+
+slumajors_df <- slumajors_df |>
+  mutate(morewomen = if_else(percfemale > 50,
+                             true = "Yes",
+                             false = "No")) |>
+  mutate(large_majority =
+           case_when(percfemale >= 70 ~ "female",
+                     percfemale <= 30 ~ "male",
+                     percfemale > 30 & percfemale < 70 ~ "none"))
+
+toy_df <- tibble(x = c(NA, 3, 4, 7),
+                 y = c(1, 4, 3, 2),
+                 z = c("A", "A", "B", NA))
+```
+
+## Class Exercises
+
+Class Exercise 1.
+
+It depends on what you're interested in. But, if you're more interested in gender imbalance, 55% might make more sense as the cutoff.
+
+Class Exercise 2. 
+
+It's nice to be as inclusive as possible. But, we should carefully consider what is truly "anonymous" when we make public results from a survey.
+
+Class Exercise 4.
+
+```{r}
+library(babynames)
+babynames |> group_by(sex, year)
+```
+
