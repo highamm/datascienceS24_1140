@@ -121,10 +121,134 @@ Class Exercise 2.
 
 It's nice to be as inclusive as possible. But, we should carefully consider what is truly "anonymous" when we make public results from a survey.
 
-Class Exercise 4.
+Class Exercise 4 and 5.
 
 ```{r}
 library(babynames)
-babynames |> group_by(sex, year)
+babynames_rank <- babynames |> group_by(sex, year) |>
+  mutate(rank_pop = rank(desc(n)))
+
+babynames_rank |> filter(rank_pop == 1) |>
+  ungroup() |>
+  group_by(name) |>
+  summarise(n_appear = n())
+  
 ```
 
+Class Exercise 6.
+
+```{r}
+babynames_test <- babynames |>
+  group_by(year, sex) |> mutate(ntest = n / prop)
+babynames_test |> slice(1, 2, 3, 4, 5)
+```
+
+If we want to just obtain the first 5 rows, we need to add an `|> ungroup()` before `slice()`. Otherwise, slice pulls the first 5 rows for each group.
+
+## Your Turn
+
+Your Turn 2.
+
+```{r}
+toy_df <- tibble(x = c(NA, 3, 4, 7),
+                 y = c(1, 4, 3, 2),
+                 z = c("A", "A", "B", NA))
+toy_df
+```
+
+a.
+
+```{r}
+toy_df |> mutate(test_x = x + 2)
+## any row that is NA is still NA in the new variable.
+```
+
+b. 
+
+```{r}
+toy_df |> arrange(x)
+toy_df |> arrange(desc(x))
+## NA is at the bottom with either order
+```
+c. 
+
+```{r}
+toy_df |> filter(x < 5)
+
+## drops NA)
+```
+
+d. 
+
+```{r}
+toy_df |> summarise(mean_x = mean(x))
+## returns NA. To get R to ignore the missing values
+## add na.rm = TRUE to the mean() function
+```
+
+e. 
+
+```{r}
+toy_df |> group_by(z) |>
+  summarise(max_x = max(x))
+## NA in z forms its own group. Then, the summary is performed
+## for any group that does not have a missing x value
+```
+
+Your Turn 3.
+
+a. generally safe: you still have access to the entire data set: you've just added another column.
+
+b. generally safe: same reason as (a): now the data is just in a different order
+
+c. generally unsafe, unless you are absolutely sure that
+the observations you're filtering out, you will not ever need.
+
+d. generally unsafe here, because summarise() collapses the data over any groups that are present, altering its structure.
+
+e. generally unsafe, unless you are absolutely sure that you will not ever need the columns that you select out.
+
+Your Turn 4.
+
+```{r}
+slumajors_df |>
+  summarise(meantotalmajor = mean(ntotal),
+            totalgrad = sum(ntotal)) 
+slumajors_df |>
+  mutate(meantotalmajor = mean(ntotal),
+            totalgrad = sum(ntotal)) |>
+  select(meantotalmajor, totalgrad, everything())
+
+## mutate() maintains the structure of the data set, and just
+## adds new columns for additional variables that are
+## created
+
+## summarise() collapses the data frame across any groups.
+## Here, there are no groups, so only 1 row is returned
+## from the summarise() statement.
+```
+
+Your Turn 5.
+
+```{r}
+babynames_distinct <- babynames |>
+  group_by(year) |>
+  summarise(n_distinct = n())
+
+ggplot(data = babynames_distinct, aes(x = year,
+                                      y = n_distinct)) +
+  geom_line()
+```
+
+Your Turn 6.
+
+
+```{r}
+babynames_distinct2 <- babynames |>
+  group_by(year, sex) |>
+  summarise(n_distinct = n())
+
+ggplot(data = babynames_distinct2, aes(x = year,
+                                      y = n_distinct)) +
+  geom_line(aes(colour = sex))
+```
