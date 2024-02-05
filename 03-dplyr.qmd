@@ -121,6 +121,18 @@ Class Exercise 2.
 
 It's nice to be as inclusive as possible. But, we should carefully consider what is truly "anonymous" when we make public results from a survey.
 
+Class Exercise 3.
+
+```{r}
+slumajors_df |>
+  mutate(testcase = case_when(percfemale >= 40 ~ "Yes",
+                              percfemale > 60 ~ "No")) |>
+  select(testcase, percfemale, everything())
+## case_when() evaluates the conditions in the order
+## provided by us. Rows that satisfy none of the conditions
+## receive an NA.
+```
+
 Class Exercise 4 and 5.
 
 ```{r}
@@ -146,6 +158,8 @@ babynames_test |> slice(1, 2, 3, 4, 5)
 If we want to just obtain the first 5 rows, we need to add an `|> ungroup()` before `slice()`. Otherwise, slice pulls the first 5 rows for each group.
 
 ## Your Turn
+
+Your Turn 1. See Handout.
 
 Your Turn 2.
 
@@ -251,4 +265,12 @@ babynames_distinct2 <- babynames |>
 ggplot(data = babynames_distinct2, aes(x = year,
                                       y = n_distinct)) +
   geom_line(aes(colour = sex))
+```
+
+Your Turn 7.
+
+```{r}
+babynames |> group_by(name) |>
+  summarise(n_births = sum(n)) |>
+  arrange(desc(n_births))
 ```
