@@ -1,0 +1,34 @@
+---
+title: "Section 4: Communication"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+## Section 4.4
+
+### Class Exercises
+
+Class Exercises 1 and 2.
+
+```{r}
+library(gapminder)
+library(tidyverse)
+country_df <- gapminder
+country_df 
+
+country_df |> filter(continent == "Europe" &
+                       lifeExp < 50)
+
+ggplot(data = country_df, aes(x = year,
+                              y = lifeExp,
+                              colour = continent)) +
+  geom_line(aes(group = country)) +
+  facet_wrap(~ continent) +
+  scale_colour_viridis_d() +
+  labs(x = "Year",
+       y = "Life Expectancy (years)",
+       colour = "Continent",
+       title = "Life Expectancy through Time")
+```

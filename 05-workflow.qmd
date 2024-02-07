@@ -1,0 +1,16 @@
+---
+title: "Section 5: Workflow"
+format: html
+---
+
+```{r}
+#| echo: false
+
+library(here)
+here()
+library(tidyverse)
+library(here)
+athletes_df <- read_csv(here("data/athletesdata.csv"))
+athletes_df
+```
+
