@@ -14,3 +14,56 @@ athletes_df <- read_csv(here("data/athletesdata.csv"))
 athletes_df
 ```
 
+## Class Exercises 
+
+Class Exercise 1. When we click the point-and-click package button, there is not really a record of us doing so. 
+
+Class Exercise 2.
+
+```{r}
+ggplot(data = mtcars, aes(x = hp, y = drat)) +
+  geom_point(aes(colour = factor(gear))) +
+  facet_wrap(~cyl) +
+  geom_smooth()
+```
+
+```{r}
+library(palmerpenguins)
+penguins |> mutate(flipper_ratio = flipper_length_mm / body_mass_g) |>
+  group_by(species, island) |>
+  summarise(mean_flipper = mean(flipper_ratio, na.rm = TRUE)) |>
+  arrange(mean_flipper) |>
+  pivot_wider(names_from = c("species"), values_from = "mean_flipper")
+```
+
+Class Exercise 4.
+
+```{r}
+library(here)
+videogame_df <- read_csv(here("data/videogame_clean.csv"))
+
+videogame_df |> summarise(mean_pt = mean(median_playtime,
+                                         na.rm = TRUE),
+                          med_pt = median(median_playtime,
+                                          na.rm = TRUE))
+
+videogame_df |> filter(median_playtime <= 1000) |>
+  summarise(mean_pt = mean(median_playtime,
+                                         na.rm = TRUE),
+                          med_pt = median(median_playtime,
+                                          na.rm = TRUE))
+## the mean is more sensitive to outliers than the median is
+```
+
+Class Exercise 5.
+
+```{r}
+## how do I separate the semester from the year in the
+## term variable below?
+library(tidyverse)
+df <- tibble(term = c("F19", "F19", "S20", "S21", "F22"))
+df
+```
+
+
+

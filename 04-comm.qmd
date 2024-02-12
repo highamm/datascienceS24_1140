@@ -1,6 +1,10 @@
 ---
 title: "Section 4: Communication"
 author: "Matt Higham"
+execute: 
+  output: false
+  echo: false
+  warning: false
 format: 
   html:
     embed-resources: true
@@ -31,6 +35,11 @@ label_df <- country_df |> filter(country == "Rwanda" |
   group_by(country) |>
   filter(lifeExp == min(lifeExp))
 label_df
+```
+
+```{r}
+#| output: true
+#| fig-height: 4
 ggplot(data = country_df, aes(x = year,
                               y = lifeExp,
                               colour = continent)) +
@@ -46,7 +55,18 @@ ggplot(data = country_df, aes(x = year,
   theme_minimal()
 ```
 
+Skip Class Exercise 7.
+
+
 ## Your Turn
+
+Your Turn 1.
+
+Deleting the outliers is an operation that someone else would not necessarily know that he did.
+
+Creating the boxplots with point and click operations are not reproducible either.
+
+A "good" reproducible analysis will allow someone else to replicate your results exactly.
 
 Your Turn 2.
 
@@ -81,4 +101,25 @@ cars_label <- mtcars |> filter(mpg == max(mpg))
 ggplot(data = mtcars, aes(x = wt, y = mpg)) +
   geom_point() +
   geom_text(data = cars_label, aes(label = car_name))
+```
+
+Your Turn 4.
+
+```{r}
+hpi_df <- read_csv("https://raw.githubusercontent.com/highamm/ds234_quarto/main/data_online/hpi-tidy.csv")
+head(hpi_df)
+ggplot(data = hpi_df, aes(x = Footprint, y = HappyLifeYears,
+                          colour = Region)) +
+  geom_point() +
+  theme(plot.background = element_rect(fill = "yellow"),
+        legend.background = element_rect(fill = "blue"),
+        panel.grid.major = element_line(colour = "black",
+                                        linewidth = 5),
+        text = element_text(colour = "red"),
+        axis.text = element_text(colour = "green"))
+## the plot is composed of rectangles, lines, and text, 
+## which can be modified with element_rect(), element_line(),
+## element_text()
+
+## element_blank() can be used to get rid of a theme element.
 ```
