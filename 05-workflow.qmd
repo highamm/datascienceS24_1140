@@ -66,4 +66,25 @@ df
 ```
 
 
+## Your Turn
 
+Your Turn 3.
+
+```{r}
+library(palmerpenguins)
+library(tidyverse)
+penguins |> mutate(flipper_ratio = flipper_length_mm / body_mass_g) |>
+  filter(flipper_ratio > median(flipper_ratio, na.rm = TRUE)) |>
+  group_by(species) |>
+  summarise(count_var = n())
+```
+
+Your Turn 4
+
+```{r}
+## how do I make a new variable that is the average of xvar for 
+## each level of group?
+library(tidyverse)
+toy_df <- tibble(xvar = c(4, 2, 5), group = c("a", "a", "b"))
+toy_df
+```
