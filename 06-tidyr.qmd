@@ -1,0 +1,90 @@
+---
+title: "Section 6: `tidyr`"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+```{r}
+library(tidyverse)
+library(here)
+prices_df <- read_csv(here("data/UBSprices2.csv"))
+prices_long <- prices_df |>
+  pivot_longer(2:7, names_to = "commodity_year",
+                          values_to = "price") |>
+  separate(commodity_year, into = c("commodity", "year"),
+           sep = -4)
+prices_long
+## sep = -4 tells R to count 4 "spots" from the right
+## and separate at that point. (positive 4 would mean
+## 4 "spots" from the left).
+```
+
+Class Exercise 3.
+
+```{r}
+prices_wide <- prices_long |>
+  pivot_wider(names_from = commodity,
+              values_from = price)
+prices_wide
+```
+
+Class Exercise 4. `prices_wide` would be easier for the first plot (can make this with `prices_long` but would have to `filter(commodity == "rice")` first).
+
+For the second plot, `prices_long` would be easier because we can easily supply `commodity` as a colour aesthetic.
+
+Class Exercises 5 and 6.
+
+```{r}
+mortality_df <- read_csv(here("data/under5mortality.csv"))
+head(mortality_df)
+
+mortality_long <- mortality_df |>
+  pivot_longer(2:217, names_to = "Year",
+               values_to = "mortality",
+               names_transform = list(Year = as.numeric)) |>
+  rename(country = `Under five mortality`)
+
+ggplot(data = mortality_long, aes(x = Year,
+                                  y = mortality)) +
+  geom_line(aes(group = country), alpha = 0.2)
+```
+
+Class Exercise 7.
+
+A lot of countries have completely flat lines before 1900. Likely, these represent "average" mortality across the entire century, not mortality for each year.
+
+## Your Turn
+
+Your Turn 1
+
+```{r}
+library(tidyverse)
+library(here)
+baseball_df <- read_csv(here("data/mlb2016.csv"))
+head(baseball_df)
+```
+
+Some columns have $ signs or other symbols.
+
+Also, the `Years` column actually contains three different variables (the number of years they've played, their start year, and their end year).
+
+Your Turn 2.
+
+```{r}
+baseball_df |> separate(Years, into = c("duration", "span"),
+                        sep = " ") |>
+  separate(span, c("start_year", "end_year"),
+           sep = "-") |>
+  mutate(Salary = parse_number(Salary),
+         Total.Value = parse_number(Total.Value),
+         Avg.Annual = parse_number(Avg.Annual),
+         start_year = parse_number(start_year),
+         end_year = parse_number(end_year))
+## baseball_df |> slice(48, 59) |> view()
+```
+
+Your Turn 3.
+
+Some players do not have an end date to their contract. Therefore, there is no `-` and there is nothing to separate by.
