@@ -70,10 +70,10 @@ Some columns have $ signs or other symbols.
 
 Also, the `Years` column actually contains three different variables (the number of years they've played, their start year, and their end year).
 
-Your Turn 2.
+Your Turn 2, 3, and 4.
 
 ```{r}
-baseball_df |> separate(Years, into = c("duration", "span"),
+baseball_clean <- baseball_df |> separate(Years, into = c("duration", "span"),
                         sep = " ") |>
   separate(span, c("start_year", "end_year"),
            sep = "-") |>
@@ -88,3 +88,86 @@ baseball_df |> separate(Years, into = c("duration", "span"),
 Your Turn 3.
 
 Some players do not have an end date to their contract. Therefore, there is no `-` and there is nothing to separate by.
+
+Your Turn 5.
+
+Side-by-side boxplots (or side-by-side violin plots).
+
+```{r}
+ggplot(data = baseball_clean, aes(x = POS, y = Salary)) +
+  geom_boxplot(colour = "lightcyan4", fill = "lightcyan1") +
+  theme_minimal()
+
+ggplot(data = baseball_clean, aes(x = POS, y = Salary)) +
+  geom_violin(colour = "lightcyan4", fill = "lightcyan1") +
+  theme_minimal()
+```
+
+Strip Plot
+
+```{r}
+ggplot(data = baseball_clean, aes(x = POS, y = Salary)) +
+  geom_jitter(width = 0.2, aes(colour = POS),
+              show.legend = FALSE) +
+  scale_colour_viridis_d() +
+  theme_minimal()
+```
+
+Faceted Histograms
+
+```{r}
+ggplot(data = baseball_clean, aes(x = Salary)) +
+  geom_histogram(colour = "lightcyan4", fill = "lightcyan1") +
+  facet_wrap(~ POS) +
+  theme_minimal()
+```
+
+Coloured Frequency Plots
+
+```{r}
+ggplot(data = baseball_clean, aes(x = Salary)) +
+  geom_freqpoly(aes(colour = POS)) +
+  theme_minimal() +
+  scale_colour_viridis_d()
+```
+
+The boxplots are most easily interpretable for this particular data set. The strip plot is also nice because you can see an approximate sample size for each position.
+
+Your Turn 7.
+
+```{r}
+nfl_df <- read_csv(here::here("data/nfl_salary.csv"))
+nfl_df
+```
+
+The tidy data set is not tidy because position should be its own variable in its own column and salary should also be its own variable in its own column.
+
+Your Turn 8.
+
+```{r}
+nfl_long <- nfl_df |> pivot_longer(2:11, names_to = "position",
+                       values_to = "salary")
+nfl_long
+```
+
+```{r}
+## all three of these achieve the task described in your turn 9.
+nfl_max <- nfl_long |> group_by(year, position) |>
+  mutate(rank_salary = rank(desc(salary),
+                            ties.method = "first")) |>
+  filter(rank_salary == 1)
+## now, ties are broken so that the first row with the tie
+## gets the higher rank
+
+nfl_long |> group_by(year, position) |>
+  arrange(desc(salary)) |>
+  slice(1)
+
+nfl_long |> group_by(year, position) |>
+  summarise(max_salary = max(salary, na.rm = TRUE))
+
+ggplot(data = nfl_max, aes(x = year, salary)) +
+  geom_line(aes(colour = position)) +
+  scale_colour_viridis_d() +
+  theme_minimal()
+```
