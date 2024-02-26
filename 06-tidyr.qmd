@@ -152,6 +152,7 @@ nfl_long
 
 ```{r}
 ## all three of these achieve the task described in your turn 9.
+## will be viable for YT 10
 nfl_max <- nfl_long |> group_by(year, position) |>
   mutate(rank_salary = rank(desc(salary),
                             ties.method = "first")) |>
@@ -159,15 +160,77 @@ nfl_max <- nfl_long |> group_by(year, position) |>
 ## now, ties are broken so that the first row with the tie
 ## gets the higher rank
 
+## will be viable for YT 10
 nfl_long |> group_by(year, position) |>
   arrange(desc(salary)) |>
   slice(1)
 
+## will not be viable for YT 10
 nfl_long |> group_by(year, position) |>
   summarise(max_salary = max(salary, na.rm = TRUE))
 
 ggplot(data = nfl_max, aes(x = year, salary)) +
   geom_line(aes(colour = position)) +
   scale_colour_viridis_d() +
+  theme_minimal()
+
+ggplot(data = nfl_max, aes(x = year, y = salary)) +
+  geom_line() +
+  facet_wrap(~ position) +
+  theme_minimal()
+## for the coloured graph, it's a little easier to compare positions,
+## but, in general, 10 is too many to distinguish so 
+## the faceted is easier to read overall.
+
+
+```
+
+Your Turn 10
+
+```{r}
+nfl_top20 <- nfl_long |> group_by(year, position) |>
+  mutate(rank_salary = rank(desc(salary),
+                            ties.method = "first")) |>
+  filter(rank_salary <= 20) |>
+  group_by(year, position) |>
+  summarise(mean_salary = mean(salary, na.rm = TRUE))
+nfl_top20
+
+ggplot(data = nfl_top20, aes(x = year, y = mean_salary)) +
+  geom_line() +
+  facet_wrap(~ position) +
+  theme_minimal()
+```
+
+Your Turn 11
+
+```{r}
+nfl_adj <- nfl_long |> filter(year == 2011 | year == 2018) |>
+  mutate(salary_adj = case_when(year == 2011 ~ salary * 1.14,
+                                year == 2018 ~ salary)) |>
+  group_by(year, position) |>
+  mutate(rank_salary = rank(desc(salary),
+                            ties.method = "first")) |>
+  filter(rank_salary <= 20) |>
+  summarise(mean_salary = mean(salary_adj, na.rm = TRUE))
+nfl_adj
+
+ggplot(nfl_adj, aes(x = year, y = mean_salary)) +
+  geom_line() +
+  facet_wrap(~ position)
+```
+
+Your Turn 12.
+
+```{r}
+nfl_18 <- nfl_long |>
+  group_by(year, position) |>
+  mutate(rank_salary = rank(desc(salary),
+                            ties.method = "first")) |>
+  filter(year == 2018)
+ggplot(data = nfl_18, aes(x = rank_salary,
+                           y = salary)) +
+  geom_line() +
+  facet_wrap(~ position) +
   theme_minimal()
 ```

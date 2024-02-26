@@ -1,0 +1,19 @@
+---
+title: "Section 7: Base `R`"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+## Class Exercises
+
+```{r}
+library(tidyverse)
+fitness_df <- read_csv(here("data/higham_fitness_notclean.csv"))
+fitness_df
+
+fitness_df |> filter(weekday %in% c(3, 4, 5))
+## equivalent to
+fitness_df |> filter(weekday == 3 | weekday == 4 | weekday == 5)
+```
