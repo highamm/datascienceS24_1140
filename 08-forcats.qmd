@@ -1,0 +1,50 @@
+---
+title: "Section 8: `forcats`"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+## Class Exercises
+
+Class Exercise 4.
+
+```{r}
+library(tidyverse)
+responses_df <- read_csv("https://raw.githubusercontent.com/highamm/ds234_quarto/main/data_online/heatmap.csv",
+                         col_types = cols(
+                           time = col_factor(),
+                           challenge = col_factor()
+                         ))
+
+responses_sum <- responses_df |>
+  mutate(time = fct_recode(time,
+                           "Most Time" = "1",
+                           "Second" = "2",
+                           "Third" = "3",
+                           "Least Time" = "4"),
+         challenge = fct_recode(challenge,
+                                "Most Challenge" = "1",
+                                "Second" = "2",
+                                "Third" = "3",
+                                "Least Challenge" = "4")) |> group_by(time, challenge, .drop = FALSE) |>
+  summarise(n_students = n()) |>
+  mutate(time = fct_relevel(time, c("Most Time",
+                                   "Second",
+                                   "Third",
+                                   "Least Time")),
+         challenge = fct_relevel(challenge,
+                                 c("Most Challenge",
+                                   "Second",
+                                   "Third",
+                                   "Least Challenge"))) |>
+  mutate(time = fct_rev(time))
+  
+ggplot(data = responses_sum, aes(x = challenge,
+                                 y = time)) +
+  geom_tile(aes(fill = n_students)) +
+  scale_fill_viridis_c() +
+  theme_minimal() +
+  scale_x_discrete(position = "top")
+```
