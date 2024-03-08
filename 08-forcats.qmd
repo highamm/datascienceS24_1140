@@ -48,3 +48,72 @@ ggplot(data = responses_sum, aes(x = challenge,
   theme_minimal() +
   scale_x_discrete(position = "top")
 ```
+
+Class Exercise 5.
+
+```{r}
+## want data frame to be 4 rows to make a lollipop plot of challenge
+responses_challenge <- responses_sum |>
+  group_by(challenge) |>
+  summarise(n_total = sum(n_students)) |>
+  mutate(challenge = fct_relevel(challenge,
+                                 c("Most Challenge",
+                                   "Second", 
+                                   "Third", 
+                                   "Least Challenge"))) |>
+  mutate(challenge = fct_rev(challenge))
+ggplot(data = responses_challenge, aes(x = challenge,
+                                       y = n_total)) +
+  geom_segment(aes(xend = challenge, y = 0, yend = n_total)) +
+  geom_point() +
+  coord_flip() +
+  theme_minimal()
+
+responses_df |> group_by(time) |>
+  summarise(n_total = n())
+## can then proceed to make lollipop plot with similar steps
+
+## in the lollipop plot, it's a lot easier to see the exact
+## count of students with each response (which is harder to 
+## see in the coloured heat map).
+```
+
+## Your Turn
+
+```{r}
+library(tidyverse)
+library(here)
+standings_df <- read_csv(here("data/standings.csv"))
+standings_df
+```
+
+Your Turn 1.
+
+```{r}
+table(standings_df$team_name)
+```
+
+Your Turn 2.
+
+```{r}
+standings_clean <- standings_df |>
+  mutate(team_name = fct_recode(team_name,
+                                Commanders = "Redskins")) |>
+  unite(col = "franchise", c(team, team_name),
+        sep = " ") |>
+  mutate(franchise = fct_collapse(franchise,
+                                  `San Diego LA Chargers` = c("San Diego Chargers", "Los Angeles Chargers"),
+                                  `St. Louis LA Ram` = c("St. Louis Rams", "Los Angeles Rams")))
+
+standings_ten <- standings_clean |> filter(playoffs == "Playoffs") |>
+  group_by(franchise) |>
+  summarise(n_playoffs = n()) |>
+  arrange(desc(n_playoffs)) |>
+  slice(1:10)
+
+ggplot(data = standings_ten, aes(x = franchise, y = n_playoffs)) +
+  geom_segment(aes(xend = franchise, y = 0, yend = n_playoffs)) +
+  geom_point() +
+  coord_flip() +
+  theme_minimal()
+```
