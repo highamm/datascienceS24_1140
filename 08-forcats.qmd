@@ -8,6 +8,28 @@ format:
 
 ## Class Exercises
 
+Class Exercise 1.
+
+The plots do not show variability in defense, distribution shape, outliers, or sample size. An improved plot could be side-by-side boxplots, strip plots, or any other plot appropriate for a quantitative and categorical variable.
+
+Class Exercise 2.
+
+```{r}
+pokemon_df <- read_csv(here("data/pokemon_allgen.csv")) |>
+  mutate(Generation_cat = factor(Generation))
+```
+
+The code says that for each unique `#`, only keep the first row (so that all other duplicates get dropped).
+
+```{r}
+## an equivalent method to group_by() |> slice()
+pokemon_df |> distinct(`#`, .keep_all = TRUE)
+```
+
+Class Exercise 3.
+
+Because the data frame is grouped by `#`, `fct_reorder()` is trying to reorder the factor for each individual pokemon number (which does not make sense!!). 
+
 Class Exercise 4.
 
 ```{r}
@@ -109,7 +131,9 @@ standings_ten <- standings_clean |> filter(playoffs == "Playoffs") |>
   group_by(franchise) |>
   summarise(n_playoffs = n()) |>
   arrange(desc(n_playoffs)) |>
-  slice(1:10)
+  slice(1:10) |>
+  mutate(franchise = fct_reorder(franchise,
+                                 n_playoffs))
 
 ggplot(data = standings_ten, aes(x = franchise, y = n_playoffs)) +
   geom_segment(aes(xend = franchise, y = 0, yend = n_playoffs)) +

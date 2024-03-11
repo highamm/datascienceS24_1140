@@ -1,0 +1,140 @@
+---
+title: "Section 10: Data Import"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+## Section 10.1: `readr`
+
+```{r}
+library(tidyverse)
+## sets theme to be minimal for all plots in the .qmd file
+theme_set(theme_minimal())
+library(here)
+cars_df <- read_csv(here("data/mtcarsex.csv"))
+head(cars_df)
+
+read_csv(here("data/mtcarsex.csv"), skip = 2) |>
+  spec()
+cars_df <- read_csv(here("data/mtcarsex.csv"), skip = 2,
+                    na = c("NA", "", "-999"),
+                    col_types = cols(
+                      cyl = col_factor(),
+                      gear = col_factor()
+                    )) |>
+  slice(-c(1:2))
+cars_df
+## skip = 2 means first two lines will be skipped
+## before reading in the data
+
+```
+
+Exercise 1.
+
+```{r}
+read_csv(here::here("data/higham_fitness_notclean.csv")) |>
+  spec()
+fitness_df <- read_csv(here::here("data/higham_fitness_notclean.csv"),
+                       col_types = cols(
+                         Start = col_date(format = ""),
+                         active_cals = col_double(),
+                         distance = col_double(),
+                         flights = col_double(),
+                         steps = col_double(),
+                         month = col_factor(),
+                         weekday = col_factor(),
+                         dayofyear = col_double(),
+                         stepgoal = col_logical()
+                       ))
+fitness_df
+```
+
+## Section 10.2: Data Scraping
+
+```{r}
+install.packages("rvest")
+library(tidyverse)
+library(rvest)
+
+## provide the URL and name it something (in this case, url).
+url <- "https://en.wikipedia.org/wiki/Gun_violence_in_the_United_States_by_state"
+
+## read_html() convert the html code from the URL into something R can read
+tab <- read_html(url) |> 
+  html_nodes("table") ## html_nodes can grab only the tables 
+
+test1 <- tab[[1]] |> html_table()
+test1
+test2 <- tab[[2]] |> html_table()
+test2
+test3 <- tab[[3]] |> html_table()
+test3
+```
+
+```{r}
+url <- "https://saintsathletics.com/sports/baseball/stats/2023"
+
+tab <- read_html(url) |> html_nodes("table")
+tab
+obj <- tab[[1]] |> html_table()
+obj
+obj2 <- tab[[2]] |> html_table()
+obj2
+```
+
+## Class Exercises
+
+Class Exercise 1.
+
+```{r}
+library(tidyverse)
+df <- read_delim(here("data/birthdays.txt"),
+                 delim = " - ",
+                 skip = 4,
+                 col_names = c("birthday",
+                               "name",
+                               "animal",
+                               "time"),
+                 na = c("N/A", "?"),
+                 col_types = cols(
+                   animal = col_factor()
+                 )) |>
+  mutate(time = parse_number(time))
+df
+```
+
+Class Exercise 2 and 3.
+
+```{r}
+library(readxl)
+library(here)
+read_excel(here("data/evals_prof.xlsx"))
+
+## 3
+read_excel(here("data/evals_prof.xlsx"),
+           sheet = 2)
+```
+
+Class Exercise 4.
+
+```{r}
+library(rvest)
+url1 <- "https://en.wikipedia.org/wiki/Josh_Allen_(quarterback)"
+tab_allen_stats <- read_html(url1) |> html_nodes("table")
+allen_df <- tab_allen_stats[[6]] |> html_table()
+allen_df
+
+## header = FALSE means that the names
+## will now occupy the first two rows.
+allen_stats <- tab_allen_stats[[6]] |> html_table(header = FALSE) 
+allen_stats
+
+## make newnames by pasting together the values 
+## from the first 2 rows and setting these to be
+## the column names with the setn_names()
+newnames <- paste(allen_stats[1, ], allen_stats[2, ])
+allen_stats |> set_names(newnames) |>
+  slice(-1, -2)
+```
