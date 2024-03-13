@@ -1,0 +1,36 @@
+---
+title: "Section 9: Ethics"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+## Class Exercises
+
+Class Exercise 1. Just because you do not put your name something does not necessarily mean that the other information you provide can't be traced back to you. 
+
+Class Exercise 2. For b and d, these are not ethically okay because it would be possible to identify a specific student's grade from the other information they provide.
+
+For c, this is ethically okay because none of the information is that sensitive.
+
+For a, this may be a violation of ethics, especially if someone's grade can be tied back to their time spent on Canvas from a friend or someone else.
+
+
+## Your Turn
+
+Your Turn 1. In hypothesis confirmation, we typically are only answering one (and only one) question of interest (as was often done in STAT 113).  In contrast, in this course, we typically do hypothesis generation/exploration (we often answer many different questions using one data set).
+
+Your Turn 2. Only once for hypothesis confirmation, but as many times as you want for hypothesis generation/exploration.
+
+Your Turn 3
+
+a. Hypothesis confirmation: we only have one specific question that we are interested in answering.
+
+b. Hypothesis exploration/generation: we'd be using each day in the data set many times to explore the different "events."
+
+c. Hypothesis exploration/generation (same reasons as b).
+
+
+
+
