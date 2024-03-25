@@ -1,0 +1,223 @@
+---
+title: "Section 11: Merging"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+```{r}
+library(tidyverse)
+library(here)
+atp_2019 <- read_csv(here("data/atp_matches_2019.csv"))
+atp_2018 <- read_csv(here("data/atp_matches_2018.csv"))
+atp_2019
+atp_2018
+
+## atp_df <- bind_rows(atp_2018, atp_2019)
+
+atp_2018 <- read_csv(here("data/atp_matches_2018.csv"),
+                     col_types = cols(winner_seed = col_character(),
+                                      loser_seed = col_character()))
+
+atp_df <- bind_rows(atp_2018, atp_2019)
+atp_df
+```
+
+```{r}
+df_test2a <- tibble(xvar = c(1, 2))
+df_test2b <- tibble(xvar = c(1, 2), y = c(5, 1))
+df_test2a
+df_test2b
+bind_rows(df_test2a, df_test2b)
+## the y variable that is missing from the first df
+## gets filled in with NAs when we stack rows
+```
+
+```{r}
+df_test1a <- tibble(xvar = c(1, 2), yvar = c(5, 1))
+df_test1b <- tibble(x = c(1, 2), y = c(5, 1))
+bind_cols(df_test1a, df_test1b)
+```
+
+```{r}
+df_test1a <- tibble(xvar = c(1, 2), yvar = c(5, 1)) |>
+  rename(x = xvar, 
+         y = yvar)
+df_test1b <- tibble(x = c(1, 2), y = c(5, 1))
+bind_rows(df_test1a, df_test1b)
+```
+
+## Mutating Joins
+
+```{r}
+library(babynames)
+life_df <- babynames::lifetables
+birth_df <- babynames::births
+babynames_df <- babynames::babynames
+
+babynames_df
+life_df
+birth_df
+```
+
+```{r}
+library(tidyverse)
+combined_left <- left_join(babynames_df, birth_df,
+                           by = join_by(year == year))
+combined_left
+## the first values of births are missing because
+## brith_df starts at 1909
+```
+
+```{r}
+left_join(birth_df, babynames_df,
+          by = join_by(year == year))
+## exercise 2
+## fewer rows because any row prior to 1909 gets
+## dropped with this join
+
+full_join(babynames_df, birth_df, by = join_by(year == year))
+inner_join(babynames_df, birth_df, by = join_by(year == year))
+```
+
+## Filtering Joins
+
+```{r}
+library(here)
+atp_2019 <- read_csv(here("data/atp_matches_2019.csv"))
+atp_2018 <- read_csv(here("data/atp_matches_2018.csv"))
+atp_2019
+```
+
+```{r}
+win10 <- atp_2018 |> group_by(winner_name) |>
+  summarise(nwin = n()) |> 
+  filter(nwin >= 10)
+win10
+
+tennis_2019_10 <- semi_join(atp_2019, win10,
+                            by = join_by(winner_name == winner_name))
+tennis_2019_10$winner_name
+
+## anti_join() keeps only rows in atp_2019
+## where the winner_name was not present as the 
+## winner_name in atp_2018
+new_winners <- anti_join(atp_2019, atp_2018,
+                         by = join_by(winner_name == winner_name)) 
+```
+
+Exercise 3.
+
+a. 5 rows (the 3 rows with the matching key plus the 2 rows in df1 that do not have a match in df2)
+
+b. 6 rows
+
+c. 8 rows (the 3 matches plus the 2 non-matching rows in df1 pus the 3 non-matching rows in df2).
+
+d. 3 rows (A, C, E)
+
+e. 3 rows
+
+f. 2 rows (B and F do not have matching keys in df2).
+
+## Class Exercises
+
+Class Exercise 1. Must assume that observations within each of the two data frames are given in the same order.
+
+Class Exercise 2.
+
+```{r}
+slumajors_df <- read_csv(here("data/SLU_Majors_17_21.csv"))
+collegemajors_df <- read_csv(here("data/college-majors.csv"))
+slumajors_df
+collegemajors_df
+
+left_join(slumajors_df, collegemajors_df,
+          join_by(Major == Major))
+## the keys here do not match exactly:
+## in college majors, the Major key is always in all
+## caps, for example
+
+```
+
+Class Exercise 3.
+
+```{r}
+library(tidyverse)
+mortality_df <- read_csv(here("data/gun_violence_us.csv"))
+mortality_df
+
+dc_df <- tibble(state = "DC", mortality_rate = 16.7,
+       ownership_rate = 0.087, region = "NE")
+mortality_df
+dc_df
+
+all_df <- bind_rows(mortality_df, dc_df)
+```
+
+Class Exercise 4.
+
+```{r}
+df1 <- as_tibble(state.x77)
+df2 <- as_tibble(state.abb)
+states_df <- bind_cols(df1, df2)
+## must assume that states in df1 are in the same
+## order as states in df2
+```
+
+Class Exercise 5.
+
+```{r}
+left_join(all_df, states_df,
+          join_by(state == value))
+full_join(all_df, states_df,
+          join_by(state == value))
+```
+
+Class Exercise 6.
+
+```{r}
+inner_join(all_df, states_df,
+           join_by(state == value))
+left_join(states_df, all_df,
+          by = join_by(value == state))
+```
+
+Class Exercise 7.
+
+```{r}
+ne_df <- all_df |> filter(region == "NE")
+semi_join(states_df, ne_df,
+          by = join_by(value == state))
+
+not_ne_df <- all_df |> filter(region != "NE")
+not_ne_df
+anti_join(states_df, not_ne_df, 
+          by = join_by(value == state))
+```
+
+
+## Your Turn 
+
+Your Turn 1.
+
+a. True
+
+b. True (venn diagram shows that the center shaded area would never be larger than the center + the left area).
+
+c. False (duplicates would create a larger data frame for the left_join. And there are other reasons).
+
+Your Turn 2.
+
+a. 6 rows 
+
+b. 8 rows (2 A's, 1 B, 2 C'S, 3 D'S)
+
+c. 10 rows (4 matches, 2 f's from df1 that are not in df2, and the 1 b and 3 d's from df2 that are not in df1).
+
+d. 4 rows (only the 2 a's and the 2 c's).
+
+e. 4 rows (filters out the 2 f's)
+
+f. 2 rows (keeps the 2 f's)
