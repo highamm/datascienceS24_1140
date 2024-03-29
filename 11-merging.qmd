@@ -221,3 +221,17 @@ d. 4 rows (only the 2 a's and the 2 c's).
 e. 4 rows (filters out the 2 f's)
 
 f. 2 rows (keeps the 2 f's)
+
+Your Turn 3. Skip.
+
+Your Turn 4.
+
+a. 300 rows: the professors with a matching key in info_df get their information appended while those without a matching key get their information filled in with NAs.
+
+b. 5 rows: the 5 professors with a matching key in courses_df.
+
+c. 285 rows: the 300 rows in courses_df minus the 15 rows with a matching key in info_df.
+
+d. 15 rows: from the 3 courses for each of the 5 professors with a matching key.
+
+e. 310 rows: 300 rows from courses_df plus the 10 rows from the 10 professors in info_df that do not have a matching key in courses_df.
