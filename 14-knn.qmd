@@ -1,0 +1,86 @@
+---
+title: "Section 14: k-nearest-neighbors"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+```{r}
+set.seed(1119)
+library(tidyverse)
+library(here) 
+
+pokemon <- read_csv(here("data", "pokemon_full.csv")) |>
+  filter(Type %in% c("Steel", "Dark", "Fire", "Ice")) |>
+  mutate(across(where(is.numeric), ~ (.x - min(.x)) /
+                                 (max(.x) - min(.x)))) 
+## performs scaling on all of the quantitative variables
+## in the data frame
+## where(is.numeric) says to only run the formula if
+## the variable class is numeric
+
+train_sample <- pokemon |>
+  slice_sample(n = 75)
+## slice_sample(n = 75) randomly selects 75 rows to be in
+## training sample
+
+test_sample <- anti_join(pokemon, train_sample)
+## anti_join() filters pokemon to remove any observations
+## that are in the train_sample
+```
+
+```{r}
+## install.packages("GGally")
+library(GGally)
+ggpairs(data = train_sample, columns = c(4, 5, 6, 3))
+## if the boxplots in the last column have very different centers
+## and not a lot of overlap, then that hints that the predictor
+## would be useful for classifying into type
+
+## the diagonal gives density plots, which are like smoothed
+## histograms
+```
+
+```{r}
+## install.packages("class")
+library(class)
+
+## create a data frame that only has the predictors
+## that we will use
+train_small <- train_sample |> select(HP, Attack, Defense, Speed)
+test_small <- test_sample |> select(HP, Attack, Defense, Speed)
+
+## put our response variable into a vector
+train_cat <- train_sample$Type
+test_cat <- test_sample$Type
+
+knn_mod <- knn(train = train_small, test = test_small,
+               cl = train_cat, k = 9)
+knn_mod
+## returns a vector of classifications in the test sample
+```
+
+```{r}
+table(knn_mod, test_cat) 
+## knn_mod is the vector of classifications (predictions of Type)
+## test_cat is the actual levels of Type
+## rows are predictions, columns are the actual values
+```
+
+Exercise 2. 11 Pokemon were correctly predicted to be Fire.
+
+Exercise 3. 3 Pokemon were incorrectly predicted to be Dark when thgey were actually Fire pokemon.
+
+Exercise 5.
+
+```{r}
+test_sample
+(1 + 11 + 1 + 3) / 45
+
+tab <- table(knn_mod, test_cat) 
+sum(diag(tab)) / sum(tab)
+## diag() only gives the values on the diagonal which
+## correspond to the correct classifications
+```
+
