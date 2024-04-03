@@ -33,7 +33,7 @@ test_sample <- anti_join(pokemon, train_sample)
 ```{r}
 ## install.packages("GGally")
 library(GGally)
-ggpairs(data = train_sample, columns = c(4, 5, 6, 3))
+ggpairs(data = train_sample, columns = c("SpAtk", "height", "weight", "Type"))
 ## if the boxplots in the last column have very different centers
 ## and not a lot of overlap, then that hints that the predictor
 ## would be useful for classifying into type
@@ -48,15 +48,15 @@ library(class)
 
 ## create a data frame that only has the predictors
 ## that we will use
-train_small <- train_sample |> select(HP, Attack, Defense, Speed)
-test_small <- test_sample |> select(HP, Attack, Defense, Speed)
+train_small <- train_sample |> select(HP, Attack, Defense, Speed, SpAtk, weight)
+test_small <- test_sample |> select(HP, Attack, Defense, Speed, SpAtk, weight)
 
 ## put our response variable into a vector
 train_cat <- train_sample$Type
 test_cat <- test_sample$Type
 
 knn_mod <- knn(train = train_small, test = test_small,
-               cl = train_cat, k = 9)
+               cl = train_cat, k = 19)
 knn_mod
 ## returns a vector of classifications in the test sample
 ```
@@ -83,4 +83,10 @@ sum(diag(tab)) / sum(tab)
 ## diag() only gives the values on the diagonal which
 ## correspond to the correct classifications
 ```
+
+Exercise 8. A larger k incorporates more observations in the training sample when classifying a case in the test sample. But, too large of a k would result in incorporating observations in the training sample that aren't that similar to the test case observation.
+
+aside:
+low k: low bias, high variance
+high k: high bias, low variance
 
