@@ -1,0 +1,69 @@
+---
+title: "Section 12: `lubridate`"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+## Class Exercises
+
+Class Exercises 1 and 2.
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(here)
+ds_df <- read_csv(here("data/ds_google.csv"))
+ds_df
+
+ds_df <- ds_df |> mutate(date_var = ym(Month))
+## since day is not in the Month variable, R forces it to 
+## be 01.
+
+ggplot(ds_df, aes(x = date_var, y = Data_Science)) +
+  geom_line() +
+  geom_smooth()
+```
+
+
+
+```{r}
+## install.packages("quantmod")
+library(quantmod)
+
+start <- ymd("2011-01-01")
+end <- ymd("2024-3-19")
+getSymbols(c("AAPL", "NTDOY", "CMG", "SPY",
+             "GME"), src = "yahoo",
+           from = start, to = end)
+#> [1] "AAPL"  "NTDOY" "CMG"   "SPY"
+
+date_tib <- as_tibble(index(AAPL)) |>
+  rename(start_date = value)
+app_tib <- as_tibble(AAPL)
+nint_tib <- as_tibble(NTDOY)
+chip_tib <- as_tibble(CMG)
+spy_tib <- as_tibble(SPY)
+gme_tib <- as_tibble(GME)
+
+all_stocks <- bind_cols(date_tib, app_tib, nint_tib, chip_tib, spy_tib, gme_tib)
+
+stocks_long <- all_stocks |>
+  select(start_date, AAPL.Adjusted, NTDOY.Adjusted,
+                      CMG.Adjusted, SPY.Adjusted, GME.Adjusted) |>
+  pivot_longer(2:6, names_to = "Stock_Type", values_to = "Price") |>
+  mutate(Stock_Type = fct_recode(Stock_Type,
+                                 Apple = "AAPL.Adjusted",
+                                 Nintendo = "NTDOY.Adjusted",
+                                 Chipotle = "CMG.Adjusted",
+                                 `S & P 500` = "SPY.Adjusted",
+                                 Gamestop = "GME.Adjusted"
+                                 ))
+tail(stocks_long)
+
+stocks_gme <- stocks_long |> filter(Stock_Type == "Gamestop")
+ggplot(data = stocks_gme, aes(x = start_date, y = Price)) +
+  geom_line() +
+  theme_minimal()
+```
