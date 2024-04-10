@@ -35,7 +35,7 @@ library(quantmod)
 start <- ymd("2011-01-01")
 end <- ymd("2024-3-19")
 getSymbols(c("AAPL", "NTDOY", "CMG", "SPY",
-             "GME"), src = "yahoo",
+             "NKE"), src = "yahoo",
            from = start, to = end)
 #> [1] "AAPL"  "NTDOY" "CMG"   "SPY"
 
@@ -45,25 +45,81 @@ app_tib <- as_tibble(AAPL)
 nint_tib <- as_tibble(NTDOY)
 chip_tib <- as_tibble(CMG)
 spy_tib <- as_tibble(SPY)
-gme_tib <- as_tibble(GME)
+nke_tib <- as_tibble(NKE)
 
-all_stocks <- bind_cols(date_tib, app_tib, nint_tib, chip_tib, spy_tib, gme_tib)
+all_stocks <- bind_cols(date_tib, app_tib, nint_tib, chip_tib, spy_tib, nke_tib)
 
 stocks_long <- all_stocks |>
   select(start_date, AAPL.Adjusted, NTDOY.Adjusted,
-                      CMG.Adjusted, SPY.Adjusted, GME.Adjusted) |>
+                      CMG.Adjusted, SPY.Adjusted, NKE.Adjusted) |>
   pivot_longer(2:6, names_to = "Stock_Type", values_to = "Price") |>
   mutate(Stock_Type = fct_recode(Stock_Type,
                                  Apple = "AAPL.Adjusted",
                                  Nintendo = "NTDOY.Adjusted",
                                  Chipotle = "CMG.Adjusted",
                                  `S & P 500` = "SPY.Adjusted",
-                                 Gamestop = "GME.Adjusted"
+                                 Nike = "NKE.Adjusted"
                                  ))
 tail(stocks_long)
 
-stocks_gme <- stocks_long |> filter(Stock_Type == "Gamestop")
-ggplot(data = stocks_gme, aes(x = start_date, y = Price)) +
+stocks_nke <- stocks_long |> filter(Stock_Type == "Nike")
+ggplot(data = stocks_nke, aes(x = start_date, y = Price)) +
   geom_line() +
   theme_minimal()
+```
+
+Class Exercise 4.
+
+```{r}
+stocks_nke |> mutate(price_lag = lag(Price)) |>
+  mutate(positive_change = if_else(Price > price_lag,
+                                   true = 1,
+                                   false = 0)) |>
+  summarise(prop_positive = mean(positive_change,
+                                 na.rm = TRUE))
+
+## shortened way:
+# stocks_nke |> mutate(price_lag = lag(Price))  |>
+#   summarise(prop_positive = mean(Price > price_lag,
+#                                  na.rm = TRUE))
+## price_lag is equal to the stock Price of the day before
+
+## class exercise 5
+stocks_nke |>
+  mutate(day_of_week = wday(start_date, label = TRUE)) |>
+  filter(day_of_week == "Wed") |>
+  mutate(price_lag = lag(Price)) |>
+  mutate(positive_change = if_else(Price > price_lag,
+                                   true = 1,
+                                   false = 0)) |>
+  summarise(prop_positive = mean(positive_change,
+                                 na.rm = TRUE))
+## same process as ce 4
+
+## class exercise 6
+stocks_nke |> mutate(month_day = mday(start_date),
+                     month = month(start_date),
+                     year = year(start_date)) |>
+  group_by(month, year) |>
+  filter(start_date == min(start_date)) |>
+  ungroup() |>
+  mutate(price_lag = lag(Price)) |>
+  mutate(positive_change = if_else(Price > price_lag,
+                                   true = 1,
+                                   false = 0)) |>
+  summarise(prop_positive = mean(positive_change,
+                                 na.rm = TRUE))
+```
+
+## Your Turn
+
+Your Turn 1
+
+```{r}
+read_csv(here::here("data/swift_kelce_df.csv"),
+         skip = 2) |>
+  rename(swift = `Taylor Swift: (United States)`,
+         kelce = `Travis Kelce: (United States)`) |>
+  mutate(swift = parse_number(swift),
+         kelce = parse_number(kelce)) ## converts <1 to 1's
 ```
