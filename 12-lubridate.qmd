@@ -116,10 +116,21 @@ stocks_nke |> mutate(month_day = mday(start_date),
 Your Turn 1
 
 ```{r}
-read_csv(here::here("data/swift_kelce_df.csv"),
+swift_kelce_df <- read_csv(here::here("data/swift_kelce_df.csv"),
          skip = 2) |>
   rename(swift = `Taylor Swift: (United States)`,
          kelce = `Travis Kelce: (United States)`) |>
   mutate(swift = parse_number(swift),
          kelce = parse_number(kelce)) ## converts <1 to 1's
+
+swift_kelce_long <- swift_kelce_df |>
+  pivot_longer(2:3, names_to = "term",
+               values_to = "popularity") |>
+  mutate(date = ym(Month))
+
+ggplot(data = swift_kelce_long, aes(x = date,
+                                    y = popularity,
+                                    colour = term)) +
+  geom_line() +
+  scale_colour_viridis_d()
 ```

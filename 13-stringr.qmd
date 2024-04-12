@@ -1,0 +1,61 @@
+---
+title: "Section 13: `stringr` and `tidytext`"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+## Section 13.2: `stringr`
+
+```{r}
+library(here)
+library(tidyverse)
+med_djok_df <- read_csv(here("data/med_djok.csv"))
+med_djok_df
+
+med_djok_df |> filter(str_detect(point, pattern = "@") == TRUE)
+## @ denotes an unforced error: keep any point that had
+## an unforced error
+
+## keep any point that is an unforced error
+med_djok_df |> filter(str_detect(point, pattern = "@") == TRUE) |>
+  
+  ## error type corresponds to the type of error made 
+  ## d for deep, w for wide, n for net
+  mutate(error_type = case_when(str_detect(point, pattern = "d@") ~ "deep error",
+                                str_detect(point, pattern = "w@") ~ "wide error",
+                                str_detect(point, pattern = "n@") ~ "net error")) |>
+  ## count up the number of errors made for each player for each error type
+  group_by(PtWinner, error_type) |>
+  summarise(n_errors = n())
+```
+
+Exercise 4.
+
+```{r}
+med_djok_df <- med_djok_df |>
+  mutate(serve_location = case_when(str_detect(point,
+                                               pattern = "^4") ~ "wide",
+                                    str_detect(point,
+                                               pattern = "^5") ~ "body",
+                                    str_detect(point,
+                                               pattern = "^6") ~ "down the center")) |>
+  relocate(serve_location)
+```
+
+## Your Turn
+
+Your Turn 1
+
+```{r}
+med_djok_df |>
+  group_by(serve_location, Serving) |>
+  summarise(n_serves = n())
+```
+
+Your Turn 2
+
+Your Turn 3
+
+
