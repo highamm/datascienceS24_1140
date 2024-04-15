@@ -44,6 +44,39 @@ med_djok_df <- med_djok_df |>
   relocate(serve_location)
 ```
 
+## Class Exercises
+
+```{r}
+## install.packages("schrute")
+library(schrute)
+schrute::theoffice
+## text is the line spoken
+
+library(tidytext)
+office_unnest <- theoffice |>
+  unnest_tokens(output = "word", input = "text")
+
+office_nostop <- anti_join(office_unnest, stop_words,
+                           join_by(word == word))
+extra_stop <- tibble(word = c("yeah", "hey", "gonna", "uh", "um"))
+
+office_nostop2 <- anti_join(office_nostop, extra_stop,
+                            join_by(word == word))
+office_plot <- office_nostop2 |> filter(character == "Michael") |>
+  group_by(word) |>
+  summarise(n_count = n()) |>
+  arrange(desc(n_count)) |>
+  slice(1:20) |>
+  mutate(word = fct_reorder(word, n_count))
+
+
+ggplot(data = office_plot, aes(x = word, y = n_count)) +
+  geom_point() +
+  geom_segment(aes(xend = word, y = 0, yend = n_count)) +
+  theme_minimal() +
+  coord_flip()
+```
+
 ## Your Turn
 
 Your Turn 1
@@ -56,6 +89,34 @@ med_djok_df |>
 
 Your Turn 2
 
+```{r}
+med_djok_df |> relocate(isSvrWinner)
+med_djok_df |>
+  group_by(Serving, serve_location) |>
+  summarise(prop = mean(isSvrWinner))
+```
+
 Your Turn 3
 
+```{r}
+med_djok_df |>
+  mutate(volley_hit = if_else(str_detect(point, pattern = "v") |
+                                str_detect(point, pattern = "z") |
+                                str_detect(point, pattern = "i") |
+                                str_detect(point, pattern = "k"),
+                              true = 1,
+                              false = 0)) |>
+  relocate(volley_hit) |>
+  summarise(prop_volley = mean(volley_hit))
+
+med_djok_df |>
+  ## [vzik] is v OR z OR i OR k
+  mutate(volley_hit = if_else(str_detect(point, pattern = "[vzik]"),
+                              true = 1,
+                              false = 0))  |>
+  summarise(prop_volley = mean(volley_hit))
+```
+use 4 different str_detect() functions
+
+use 1 str_detect() function
 
