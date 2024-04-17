@@ -1,0 +1,56 @@
+---
+title: "Section 16: `SQL` and `dbplyr`"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+```{r}
+## install.packages("DBI")
+## install.packages("duckdb")
+
+library(DBI)
+library(duckdb)
+con <- DBI::dbConnect(duckdb::duckdb())
+
+library(here)
+duckdb_read_csv(conn = con, name = "tennis2018", 
+                files = here("data/atp_matches_2018.csv"))
+duckdb_read_csv(conn = con, name = "tennis2019", 
+                files = here("data/atp_matches_2019.csv"))
+dbListTables(con)
+```
+
+```{r}
+library(tidyverse)
+
+sql <- "
+  SELECT surface, winner_name, loser_name, w_ace, l_ace, minutes
+  FROM tennis2019 
+  WHERE minutes > 240
+"
+dbGetQuery(con, sql)|>
+  as_tibble()
+
+## exercise 1
+## returning all matches from tennis_2019 that lasted for 
+## more than 240 minutes
+
+## exercise 2
+## WHERE is similar to filter()
+## SELECT is similar to select()
+```
+
+```{r}
+library(dbplyr)
+tennis_db <- tbl(con, "tennis2019")
+tennis_db
+
+tennis_query1 <- tennis_db |> 
+  filter(minutes > 240) |> 
+  select(minutes, winner_name, loser_name, minutes, tourney_name) |>
+  arrange(desc(minutes))
+
+tennis_query1 |> show_query()
+```
