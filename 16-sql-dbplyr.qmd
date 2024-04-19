@@ -53,4 +53,98 @@ tennis_query1 <- tennis_db |>
   arrange(desc(minutes))
 
 tennis_query1 |> show_query()
+
+tennis_query1
+
+tennis_query1 |>
+  collect()
+## collect() turns the query into a standard tibble that
+## we have worked with the entire semester
+```
+
+Exercise 3.
+
+```{r}
+tennis_db |>
+  group_by(surface) |>
+  summarise(n_surface = n()) |>
+  show_query()
+```
+
+## Section 16.3: SQL
+
+* `WHERE` is similar to `filter()`
+* `ORDER BY` is similar to `arrange()`
+* `GROUP BY` is similar to `group_by()`
+* `SELECT` is similar to
+    * `select()`
+    * `rename()` 
+    * `mutate()` without a summary function
+    * `summarise()` with a summary function
+
+Exercise 4.
+
+```{r}
+tennis_db |> filter(tourney_name == "Wimbledon") |>
+  show_query()
+```
+
+## Class Exercises
+
+Class Exercise 1.
+
+```{r}
+tennis_db |>
+  mutate(ace_diff = w_ace - l_ace) |>
+  select(winner_name, loser_name, w_ace, l_ace, ace_diff) |>
+  arrange(desc(ace_diff)) |>
+  show_query()
+```
+
+Class Exercise 2.
+
+```{r}
+tennis_db |>
+  mutate(rank_point_diff =
+           winner_rank_points - loser_rank_points) |>
+  select(winner_name, loser_name, rank_point_diff) |>
+  show_query()
+```
+
+## Your Turn
+
+Your Turn 1.
+
+
+```{r}
+tennis_db |> group_by(tourney_name) |>
+  summarise(longest_match = max(minutes)) |>
+  show_query()
+## SQL automatically removes NAs before calculations (
+## (recall that R does not do this)
+
+```
+
+Your Turn 2.
+
+```{r}
+## does not work
+tennis_db |> mutate(surface = fct_recode(surface,
+                                         "other" = "Grass"))
+
+tennis_db |> 
+  collect() |>
+  mutate(surface = fct_recode(surface,
+                             "other" = "Grass"))
+```
+
+Your Turn 4.
+
+```{r}
+tennis_db |>
+  filter(surface == "Hard") |>
+  group_by(winner_name) |>
+  summarise(n_win = n()) |>
+  arrange(desc(n_win)) |>
+  show_query()
 ```
