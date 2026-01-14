@@ -1,0 +1,32 @@
+---
+title: "Untitled"
+format: html
+---
+
+jikogrewjpoi;gewrJPOI;GJOPFEWPOGFJESP
+
+```{r}
+1 + 1
+79 - 5
+
+library(tidyverse)
+
+pres_df <- read_csv("https://raw.githubusercontent.com/highamm/ds234_quarto/main/data_online/pres2000.csv") 
+pres_df
+
+ggplot(data = pres_df, aes(x = Bush)) +
+  geom_histogram(colour = "black", fill = "darkred", bins = 15) +
+  labs(x = "Votes for Bush in Florida")
+
+ggplot(data = pres_df, aes(x = Buchanan, y = Bush)) +
+  geom_point()
+```
+
+You can add options to executable code like this 
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
