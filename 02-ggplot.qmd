@@ -1,0 +1,63 @@
+---
+title: "Section 2: ggplot2"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+```{r}
+library(tidyverse)
+stat113_df <- read_csv("https://raw.githubusercontent.com/highamm/ds234_quarto/main/data_online/stat113.csv")
+```
+
+## Section 2.3: Introduction to Plotting
+
+One quantitative variable.
+
+```{r}
+stat113_df
+ggplot(data = stat113_df, aes(x = GPA)) +
+  geom_histogram(colour = "navyblue", fill = "plum2", bins = 15)
+
+ggplot(data = stat113_df, aes(x = GPA)) +
+  geom_freqpoly(bins = 17)
+
+ggplot(data = stat113_df, aes(x = GPA)) +
+    geom_histogram(colour = "black", fill = "white", bins = 17) +
+    geom_freqpoly(bins = 17)
+```
+
+One categorical variable.
+
+```{r}
+ggplot(data = stat113_df, aes(x = Award)) +
+  geom_bar(colour = "mistyrose", fill = "lightcoral")
+```
+
+Two categorical variables.
+
+```{r}
+ggplot(data = stat113_df, aes(x = Sport, fill = SocialMedia)) +
+  geom_bar() 
+
+ggplot(data = stat113_df, aes(x = Sport, fill = Award)) +
+  geom_bar(position = "fill") +
+  labs(y = "Proportion")
+```
+
+One categorical and one quantitative
+
+```{r}
+ggplot(data = stat113_df, aes(x = Award, y = Exercise)) +
+  geom_boxplot()
+
+ggplot(data = stat113_df, aes(x = Sex, y = GPA)) +
+  geom_violin(colour = "slategrey", fill = "yellow")
+## there no evidence of association between sex and gpa
+
+ggplot(data = stat113_df, aes(x = Award, y = Exercise)) +
+  geom_jitter(width = 0.10)
+## the strip plot shows a rough idea of sample size
+```
+
