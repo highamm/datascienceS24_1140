@@ -31,7 +31,7 @@ ggplot(data = stat113_df, aes(x = GPA)) +
 One categorical variable.
 
 ```{r}
-ggplot(data = stat113_df, aes(x = Award)) +
+ggplot(data = stat113_df, aes(x = SocialMedia)) +
   geom_bar(colour = "mistyrose", fill = "lightcoral")
 ```
 
@@ -59,5 +59,118 @@ ggplot(data = stat113_df, aes(x = Sex, y = GPA)) +
 ggplot(data = stat113_df, aes(x = Award, y = Exercise)) +
   geom_jitter(width = 0.10)
 ## the strip plot shows a rough idea of sample size
+```
+
+```{r}
+library(tidyverse)
+fitness_full <- read_csv("https://raw.githubusercontent.com/highamm/ds234_quarto/main/data_online/higham_fitness_clean.csv",
+                         col_types = list(stepgoal = col_factor())) |>
+  mutate(weekend_ind = case_when(weekday == "Sat" | weekday == "Sun" ~ "weekend",
+                                 .default = "weekday"))
+```
+
+## Section 2.4: Practice
+
+```{r}
+stat113_restructured <- stat113_df |> group_by(SocialMedia) |>
+  summarise(n_social = n())
+stat113_restructured
+
+ggplot(data = stat113_restructured, aes(x = SocialMedia)) +
+  geom_bar()
+## each level of socialmedia appears only once so each
+## bar gets a height of one
+
+ggplot(data = stat113_restructured, aes(x = SocialMedia,
+                                        y = n_social)) +
+  geom_col()
+```
+
+Class Exercise 2. 
+
+```{r}
+fitness_full
+ggplot(data = fitness_full, aes(x = distance, y = active_cals)) +
+  geom_point() +
+  geom_smooth()
+```
+
+geom_point() and also geom_smooth()
+
+Class Exercise 3. geom_line() and also geom_smooth()
+
+```{r}
+ggplot(data = fitness_full, aes(x = Date, y = steps)) +
+  geom_line() +
+  geom_smooth()
+## the line plot is appropriate here because there is only one
+## y value (steps) for each unique x value (Date). This is often
+## true when x is time.
+```
+
+Class Exercise 4. use either colour or faceting or both.
+
+```{r}
+ggplot(data = stat113_df, aes(x = Exercise, y = GPA)) +
+  geom_point() +
+  facet_wrap(~ Sex)
+ggplot(data = stat113_df, aes(x = Exercise, y = GPA)) +
+  geom_point() +
+  facet_wrap(~ Sport)
+
+ggplot(data = stat113_df, aes(x = Exercise, y = GPA, colour = Sex)) +
+  geom_point() +
+  facet_wrap(~ Sport)
+
+ggplot(data = stat113_df, aes(x = Exercise, y = GPA)) +
+  geom_point() +
+  facet_grid(Sex ~ Sport)
+## facet_grid() is generally useful for faceting by two categorical
+## variables.
+```
+
+Class Exercise 5.
+
+```{r}
+ggplot(data = stat113_df, aes(x = Award, y = Exercise)) +
+  geom_boxplot(outlier.shape = 8)
+```
+
+## Your Turn
+
+Your Turn 1. 
+
+a. 25 rows (one row for each student that we are getting information on) and only one column would be needed (Major).
+
+| Major |
+
+| Statistics |
+|Statistics |
+| Other |
+| Other |
+.....
+| Data Science |
+
+b. 3 rows (one for each levele of Major) and two columns (one for Major and one that has the counts).
+
+|Major | count |
+| Data Science  | 8 |
+| Other | 10 |
+|Statistics | 7 |
+
+Your Turn 2.
+
+```{r}
+ggplot(data = stat113_df, aes(x = GPA, y = Wgt,
+                              colour = SocialMedia)) +
+  geom_point()
+ggplot(data = stat113_df, aes(x = GPA, y = Wgt)) +
+  geom_point() +
+  facet_wrap(~ SocialMedia)
+
+## in general, if the categorical variable has
+## few levels (2-4), colour often works better.
+
+## if there are a lot of levels (like more than 7), colours become hard to distinguish and it's better to facet.
 ```
 
