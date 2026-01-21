@@ -174,3 +174,65 @@ ggplot(data = stat113_df, aes(x = GPA, y = Wgt)) +
 ## if there are a lot of levels (like more than 7), colours become hard to distinguish and it's better to facet.
 ```
 
+Your Turn 4.
+
+```{r}
+ggplot(data = fitness_full, aes(x = steps, colour = month)) +
+  geom_freqpoly()
+
+ggplot(data = fitness_full, aes(x = steps)) +
+  geom_histogram(colour = "forestgreen", fill = "grey90") +
+  facet_wrap(~ month)
+
+ggplot(data = fitness_full, aes(x = month, y = steps)) +
+  geom_boxplot()
+## with boxplots, it's a little easier to compare the ## months but with this histograms, we see a rough sample size
+```
+
+Your Turn 5.
+
+```{r}
+## THIS IS BAD
+ggplot(data = stat113_df, aes(x = GPA, y = Exercise)) +
+  geom_line()
+## line plots are only useful when there is one y for
+## each unique value of x (not true for something like GPA)
+```
+
+Your Turns 6-8. Skip.
+
+
+## Section 2.5
+
+
+## Section 2.6: Practice
+
+```{r}
+stat113_df <- read_csv("https://raw.githubusercontent.com/highamm/ds234_quarto/main/data_online/stat113.csv")
+glimpse(stat113_df)
+## glimpse() shows a preview of all variables, even if there are alot!
+```
+
+Class Exercise 1.
+
+```{r}
+ggplot(data = stat113_df, aes(x = Wgt, y = Hgt, colour = Sport)) +
+  geom_point() +
+  geom_smooth()
+
+ggplot(data = stat113_df, aes(x = Wgt, y = Hgt)) +
+  geom_point(aes(colour = Sport)) +
+  geom_smooth()
+
+ggplot(data = stat113_df, aes(x = Wgt, y = Hgt)) +
+  geom_point() +
+  geom_smooth(aes(colour = Sport))
+```
+
+Class Exercise 2.
+
+```{r}
+ggplot(data = stat113_df, aes(x = TV)) +
+  geom_histogram(colour = "black", fill = "white")
+```
+
