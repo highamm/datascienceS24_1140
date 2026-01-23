@@ -236,3 +236,22 @@ ggplot(data = stat113_df, aes(x = TV)) +
   geom_histogram(colour = "black", fill = "white")
 ```
 
+Your Turn 1.
+
+a. no: method = "lm" must go outside aes() because "lm" is not a variable in our data set.
+
+b. this works!
+
+c. no: for geom_point(), colour = "purple" needs to be outside aes(), and for geom_smooth(), colour = groupvar needs to be inside aes().
+
+d. no: for geom_smooth(), colour = groupvar needs to be inside aes().
+
+e. this works!
+
+f. no: colour = "purple" cannot be inside aes() since "purple" is not a variable in our data.
+
+Your Turn 2.
+
+ggplot(data = toy_df) +
+  geom_point(aes(x = xvar, y = yvar), colour = "purple") +
+  geom_smooth(method = "lm", aes(x = xvar, y = yvar, colour = groupvar))
