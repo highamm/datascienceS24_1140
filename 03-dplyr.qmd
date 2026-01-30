@@ -67,3 +67,111 @@ babynames_5 <- babynames |> filter((name == "Matthew" & sex == "M") |
 ggplot(data = babynames_5, aes(x = year, y = n, colour = name)) +
   geom_line()
 ```
+
+## Section 3.4
+
+Class Exercise 1.
+
+```{r}
+library(tidyverse)
+slumajors_df <- read_csv("https://raw.githubusercontent.com/highamm/ds234_quarto/main/data_online/SLU_Majors_17_21.csv")
+slumajors_df
+
+slumajors_df <- slumajors_df |>
+  mutate(ntotal = nfemales + nmales) |>
+  mutate(percfemale = 100 * nfemales / (nfemales + nmales))
+
+slumajors_df <- slumajors_df |>
+  mutate(morewomen = if_else(percfemale > 50,
+                             true = "Yes",
+                             false = "No")) |>
+  mutate(large_majority =
+           case_when(percfemale >= 70 ~ "female",
+                     percfemale <= 30 ~ "male",
+                     percfemale > 30 & percfemale < 70 ~ "none")) 
+
+
+slumajors_df |> mutate(testcase = case_when(percfemale >= 40 ~ "Yes",
+                                            percfemale > 60 ~ "No")) |>
+  relocate(testcase) ## moves testcase so that it appears first
+## when a row satisfies multiple conditions, case_when() will go
+## with whatever condition is firat
+## when a row satisfies no conditions, the new variable is NA
+```
+
+Class Exercise 2.
+
+```{r}
+library(babynames)
+
+babynames |> 
+  group_by(year, sex) |>
+  mutate(rank_pop = rank(desc(n))) |>
+  filter(rank_pop == 1) |>
+  ungroup() |>
+  group_by(name) |>
+  summarise(n_pop = n()) |>
+  arrange(desc(n_pop))
+```
+
+Class Exercise 3.
+
+```{r}
+babynames |> 
+  group_by(year, sex) |> 
+  arrange(desc(n)) |>
+  slice(1) |>
+  ungroup() |>
+  group_by(name) |>
+  summarise(n_pop = n()) |>
+  arrange(desc(n_pop))
+
+babynames |> 
+  group_by(year, sex) |> 
+  filter(n == max(n)) |>
+  ungroup() |>
+  group_by(name) |>
+  summarise(n_pop = n()) |>
+  arrange(desc(n_pop))
+```
+
+Class Exercise 4.
+
+```{r}
+babynames_test <- babynames |>
+  group_by(year, sex) |> mutate(ntest = n / prop)
+babynames_test |> slice(1, 2, 3, 4, 5)
+## gets first 5 rows for each group
+
+babynames_test |> ungroup() |> slice(1, 2, 3, 4, 5)
+```
+
+Class Exercise 5.
+
+```{r}
+fitness_df <- read_csv("https://raw.githubusercontent.com/highamm/ds234_quarto/main/data_online/higham_fitness_clean.csv") |>
+  select(-stepgoal)
+fitness_df |>
+  mutate(stepgoal_ind = if_else(steps >= 10000,
+                                true = 1,
+                                false = 0)) |>
+  relocate(stepgoal_ind) |>
+  group_by(year) |>
+  summarise(prop_goal = mean(stepgoal_ind)) |>
+  arrange(desc(prop_goal))
+```
+
+## Your Turn
+
+Your Turn 3.
+
+a. mutate() is safe: we are just adding a new variable without modifying any of the original data.
+
+b. arrange() is also safe: the data is still the same: just in a different order.
+
+c. filter() is less safe: you are removing rows that are then gone for good.
+
+d. summarise() is not safe at all: it removes columns that aren't involved, it reduces the number of rows to one row per group.
+
+e. select() is less safe: would only do this for columns that you _know_ you will never need.
+
