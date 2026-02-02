@@ -163,6 +163,39 @@ fitness_df |>
 
 ## Your Turn
 
+Your Turn 1. Skip.
+
+Your Turn 2.
+
+```{r}
+toy_df <- tibble(x = c(NA, 3, 4, 7),
+                 y = c(1, 4, 3, 2),
+                 z = c("A", "A", "B", NA))
+
+## a
+toy_df |> mutate(new_x = x + 5)
+## the NA value is still NA
+
+## b
+toy_df |> arrange(desc(x))
+## NAs go at the bottom
+
+## c
+toy_df |> filter(x < 5)
+## NAs get dropped
+
+## d
+toy_df |> summarise(x_mean = mean(x))
+## return an NA (the mean of 3, 4, 7, and NA is also NA)
+
+toy_df |> summarise(x_mean = mean(x, na.rm = TRUE))
+## can remove missing values first
+
+toy_df |> group_by(z) |> summarise(x_mean = mean(x))
+## treats NAs as their own group.
+
+```
+
 Your Turn 3.
 
 a. mutate() is safe: we are just adding a new variable without modifying any of the original data.
@@ -174,4 +207,51 @@ c. filter() is less safe: you are removing rows that are then gone for good.
 d. summarise() is not safe at all: it removes columns that aren't involved, it reduces the number of rows to one row per group.
 
 e. select() is less safe: would only do this for columns that you _know_ you will never need.
+
+Your Turn 4.
+
+```{r}
+slumajors_df |>
+  summarise(meantotalmajor = mean(ntotal),
+            totalgrad = sum(ntotal)) 
+slumajors_df |>
+  mutate(meantotalmajor = mean(ntotal),
+            totalgrad = sum(ntotal)) |>
+  select(meantotalmajor, totalgrad, everything())
+## mutate() adds a new column, keeps the same number of rows and keeps
+## all of the other data.
+
+## summarise() makes a new table that is one row per group (so just 1 row here)
+```
+
+Your Turn 5.
+
+```{r}
+library(babynames)
+babynames_distinct <- babynames |> group_by(year) |>
+  summarise(n_distinct = n())
+
+ggplot(data = babynames_distinct, aes(x = year, y = n_distinct)) +
+  geom_line()
+```
+
+Your Turn 6.
+
+```{r}
+babynames_fm <- babynames |> group_by(year, sex) |>
+  summarise(n_distinct = n())
+babynames_fm
+
+ggplot(data = babynames_fm, aes(x = year, y = n_distinct)) +
+  geom_line(aes(colour = sex))
+```
+
+Your Turn 7.
+
+```{r}
+babynames |> group_by(name) |>
+  summarise(total_births = sum(n)) |>
+  arrange(desc(total_births))
+  
+```
 
