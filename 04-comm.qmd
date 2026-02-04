@@ -1,0 +1,36 @@
+---
+title: "Section 4: Communication"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+Section 4.4
+
+Your Turn 1. Changing the y-axis limits and labels with point-and-click makes it hard for someone else to reproduce the exact same graph. Removing the outliers is also not reproducible unless he leaves a very detailed written description. Finally, they use a t-test function, which they would need to describe in detail to make this reproducible.
+
+Your Turn 2.
+
+```{r}
+library(tidyverse)
+fitness_full <- read_csv("https://raw.githubusercontent.com/highamm/ds234_quarto/main/data_online/higham_fitness_clean.csv",
+                         col_types = list(stepgoal = col_factor())) |>
+  mutate(weekend_ind = case_when(weekday == "Sat" | weekday == "Sun" ~ "weekend",
+                                 .default = "weekday"))
+
+## 2.4 class exercise 3.
+fitness_lab <- fitness_full |>
+  filter(Date == "2019-04-14" | Date == "2021-05-24") |>
+  mutate(event = c("half-marathon", "grand canyon"))
+## creating a new variable with values that we supply
+fitness_lab |> relocate(event)
+
+ggplot(data = fitness_full, aes(x = Date, y = steps)) +
+  geom_line() +
+  geom_smooth() +
+  geom_text(data = fitness_lab, aes(label = event))
+```
+
+Your Turn 3.
+
