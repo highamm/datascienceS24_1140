@@ -1,10 +1,74 @@
 ---
 title: "Section 4: Communication"
 author: "Matt Higham"
+execute:
+  warning: false
 format: 
   html:
     embed-resources: true
 ---
+
+Class Exercises
+
+```{r}
+#| echo: false
+library(tidyverse)
+```
+
+```{r}
+library(gapminder)
+country_df <- gapminder
+glimpse(country_df)
+
+country_df
+ggplot(data = country_df, aes(x = year, y = lifeExp, group = country)) +
+  geom_line() +
+  facet_wrap(~ continent)
+
+## step 1: figure out what these three countries are.
+
+country_df |> group_by(continent) |>
+  arrange(lifeExp) |>
+  slice(1)
+## alt: group_by(continent) |> filter(lifeExp == min(lifeExp))
+## Africa: Rwanda
+## Europe: Turkey
+country_df |> filter(continent == "Asia" & year <= 1980 & year >= 1970 & lifeExp < 35)
+## Asia: Cambodia
+
+## colour the three countries with the "interesting" patterns
+## hint: use a second geom_line()
+country_3 <- country_df |> filter(country == "Rwanda" | country == "Cambodia" | country == "Turkey")
+
+## change x and y axis labels
+## use a different theme
+## use a CVD-friendly colour scale
+## add a title and a caption, where the caption 
+## gives the events in Rwanda and Cambodia
+## look into alpha, a parameter that can be used in geoms to 
+## control transparency
+ggplot(data = country_df, aes(x = year, y = lifeExp, group = country)) +
+  geom_line(alpha = 0.2) +
+  geom_line(data = country_3, aes(colour = country)) +
+  facet_wrap(~ continent) +
+  labs(x = "year", y = "life expectancy",
+       title = "Life Expectancy through Time",
+       caption = "Cambodia and Rwanda had a genocide and a civil war.") +
+  scale_colour_viridis_d() +
+  theme_minimal()
+
+## alternative: label the three country names directly 
+## at their minimum life expectancies
+
+country_3_lab <- country_df |> filter(country == "Rwanda" | country == "Cambodia" | country == "Turkey") |> 
+  group_by(country) |>
+  filter(lifeExp == min(lifeExp))
+  
+ggplot(data = country_df, aes(x = year, y = lifeExp, group = country)) +
+  geom_line() +
+  geom_text(data = country_3_lab, aes(label = country)) +
+  facet_wrap(~ continent)
+```
 
 Section 4.4
 
