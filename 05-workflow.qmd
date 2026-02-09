@@ -1,0 +1,68 @@
+---
+title: "Untitled"
+format: html
+---
+
+```{r}
+library(tidyverse)
+library(here)
+athletes_df <- read_csv(here("data/athletesdata.csv"))
+```
+
+## Section 5.7
+
+Class Exercises
+
+Class Exercise 1. This is bad for reproducibility because someone else would not be able to tell which packages you decided to load.
+
+Class Exercise 2.
+
+```{r}
+ggplot(data = mtcars, aes(x = hp, y = drat)) +
+  geom_point(aes(colour = factor(gear))) +
+  facet_wrap(~ cyl) +
+  geom_smooth()
+```
+
+Class Exercise 3.
+
+
+```{r}
+library(palmerpenguins)
+penguins |> mutate(flipper_ratio = flipper_length_mm / body_mass_g) |>
+  group_by(species, island) |>
+  summarise(mean_flipper = mean(flipper_ratio, na.rm = TRUE)) |>
+  arrange(mean_flipper) |>
+  pivot_wider(names_from = c("species"), values_from = "mean_flipper")
+```
+
+Class Exercise 4.
+
+```{r}
+videogame_df <- read_csv(here("data/videogame_clean.csv"))
+videogame_df |>
+  summarise(mean_pt = mean(median_playtime, na.rm = TRUE),
+            median_pt = median(median_playtime, na.rm = TRUE))
+
+videogame_df |> filter(median_playtime < 1000) |>
+  summarise(mean_pt = mean(median_playtime, na.rm = TRUE),
+            median_pt = median(median_playtime, na.rm = TRUE))
+```
+
+Class Exercise 5.
+
+```{r}
+evals_df <- read_csv(here("data/evals_prof_S21.csv"))
+evals_df
+```
+
+```{r}
+library(tidyverse)
+toy_df <- tibble(Term = c("F19", "F19", "S20", "F20", "S21"))
+toy_df
+## how can I make a semester variable and a year variable?
+```
+
+
+
+

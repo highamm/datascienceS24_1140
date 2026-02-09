@@ -98,3 +98,30 @@ ggplot(data = fitness_full, aes(x = Date, y = steps)) +
 
 Your Turn 3.
 
+```{r}
+mtcars_rows <- mtcars |> rownames_to_column() |> rename(car_name = rowname)
+mtcars_rows
+
+mtcars_lab <- mtcars_rows |> arrange(desc(mpg)) |>
+  slice(1)
+
+ggplot(data = mtcars_rows, aes(x = wt, y = mpg)) +
+  geom_point() +
+  geom_text(data = mtcars_lab, aes(label = car_name),
+            nudge_y = 1.5)
+```
+
+Your Turn 4.
+
+```{r}
+hpi_df <- read_csv("https://raw.githubusercontent.com/highamm/ds234_quarto/main/data_online/hpi-tidy.csv")
+
+ggplot(data = hpi_df, aes(x = Footprint, y = HappyLifeYears,
+                          colour = Region)) +
+  geom_point() +
+  theme(plot.background = element_rect(fill = "orangered4"),
+        axis.text = element_text(colour = "hotpink"),
+        axis.line = element_line(linewidth = 3, colour = "green"))
+```
+
+
