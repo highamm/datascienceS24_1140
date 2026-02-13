@@ -63,6 +63,39 @@ toy_df
 ## how can I make a semester variable and a year variable?
 ```
 
+Your Turns
+
+Your Turn 3.
+
+```{r}
+penguins |> mutate(flipper_ratio = flipper_length_mm / body_mass_g) |>
+  relocate(flipper_ratio) |>
+  filter(flipper_ratio > median(flipper_ratio, na.rm = TRUE)) |>
+  group_by(species) |>
+  summarise(count_var = n())
+```
+
+
+Your Turn 4.
+
+```{r}
+## NOT A REPREX: other people may not have access to athletesdata
+athletes_df <- read_csv(here("data/athletesdata.csv"))
+athletes_df
+## how can i figure out the max endorsements for each sport?
+
+
+## REPREX
+library(tidyverse)
+sport_toy <- tibble(Sport = c("Football", "Football", "Baseball", "Tennis", "Baseball"),
+       endorsements = c(75741, 56757, 24212, 68568, 04040))
+sport_toy
+## how can i figure out the max endorsements for each sport?
+
+```
+
+
+
 
 
 
