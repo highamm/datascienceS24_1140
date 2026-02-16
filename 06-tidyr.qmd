@@ -1,0 +1,95 @@
+---
+title: "Section 6: Tidying"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+
+## Class Exercises 
+
+Class Exercises 2 through 4
+
+```{r}
+library(tidyverse)
+library(here)
+prices_df <- read_csv(here("data/UBSprices2.csv"))
+prices_df
+## not tidy: violates (1): each variable (year, commodity, price) should
+## be in their own column, not spread across 6 columns
+
+prices_tidy <- prices_df |> pivot_longer(2:7, names_to = "temp",
+                          values_to = "price") |>
+  separate(col = temp, into = c("commodity", "year"), sep = -4)
+
+prices_rice <- prices_tidy |> filter(commodity == "rice")
+ggplot(data = prices_rice, aes(x = year, y = price)) +
+  geom_line(aes(group = city))
+
+## ce 4
+prices_amsterdam <- prices_tidy |> filter(city == "Amsterdam")
+ggplot(data = prices_amsterdam, aes(x = year, y = price)) +
+  geom_line(aes(group = commodity, colour = commodity)) +
+  scale_colour_viridis_d() +
+  theme_minimal()
+
+ggplot(data = prices_amsterdam, aes(x = year, y = price)) +
+  geom_line() +
+  scale_colour_viridis_d() +
+  theme_minimal()
+```
+
+Class Exercises 5 through 7.
+
+```{r}
+mortality_df <- read_csv(here("data/under5mortality.csv"))
+mortality_df
+
+mortality_long <- mortality_df |> pivot_longer(2:217, names_to = "year",
+                             values_to = "mortality") |>
+  rename(country = `Under five mortality`) |>
+  mutate(year = as.numeric(year))
+
+ggplot(data = mortality_long, aes(x = year, y = mortality)) +
+  geom_line(aes(group = country), alpha = 0.2)
+## some lines might be flat if the graph is using a century-long
+## measurement for mortality
+```
+
+Your Turn 
+
+Your Turn 1.
+
+```{r}
+library(tidyverse)
+library(here)
+baseball_df <- read_csv(here("data/mlb2016.csv"))
+glimpse(baseball_df)
+baseball_df
+
+## 4 is violated here: there are dollar signs in some of the variables, which are units
+## Years actually contains three variables, not one (it has
+## contract duration, start year, and end year)
+```
+
+Your Turns 2 through 4
+
+```{r}
+baseball_df <- baseball_df |> separate(Years, c("duration", "temp"),
+                        sep = " ") |>
+  separate(temp, c("Start", "End"), sep = "-")
+## warning since, for one year contracts, there is no dash
+
+baseball_df <- baseball_df |>
+  mutate(Salary = parse_number(Salary),
+         Total.Value = parse_number(Total.Value),
+         Avg.Annual = parse_number(Avg.Annual),
+         Start = parse_number(Start),
+         End = parse_number(End))
+baseball_df
+```
+
+
+
+

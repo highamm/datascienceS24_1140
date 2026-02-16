@@ -1,6 +1,9 @@
 ---
-title: "Untitled"
-format: html
+title: "Section 5: Workflow"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
 ---
 
 ```{r}
