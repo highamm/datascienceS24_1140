@@ -88,6 +88,67 @@ baseball_df <- baseball_df |>
          Start = parse_number(Start),
          End = parse_number(End))
 baseball_df
+
+
+```
+
+Your Turn 5.
+
+```{r}
+## BAD
+ggplot(data = baseball_df, aes(x = POS, y = Salary)) +
+  geom_col()
+
+ggplot(data = baseball_df, aes(x = POS, y = Salary)) +
+  geom_boxplot()
+ggplot(data = baseball_df, aes(x = Salary)) +
+  geom_histogram(colour = "skyblue4", fill = "skyblue1",
+                 bins = 15) +
+  facet_wrap(~ POS)
+```
+
+Your Turn 6.
+
+```{r}
+nfl_df <- read_csv(here::here("data/nfl_salary.csv"))
+nfl_df
+## not tidy since position should be in its own column
+## and salary should be in its own column
+```
+
+Your Turn 7.
+
+```{r}
+nfl_long <- nfl_df |> pivot_longer(2:11, names_to = "position",
+                       values_to = "salary")
+nfl_long
+
+nfl_max <- nfl_long |> group_by(position, year) |>
+  arrange(desc(salary)) |>
+  slice(1)
+
+##OR
+nfl_long |> group_by(position, year) |>
+  summarise(max_salary = max(salary, na.rm = TRUE))
+## OR
+nfl_long |> group_by(position, year) |>
+  filter(salary == max(salary, na.rm = TRUE))
+
+ggplot(data = nfl_max, aes(x = year, y = salary)) +
+  geom_line(aes(group = position, colour = position))
+```
+
+Your Turn 8. Re-make this plot but instead of max salary, we plot the average of the top 32 players for each position in each year.
+
+```{r}
+nfl_32 <- nfl_long |> group_by(position, year) |>
+  arrange(desc(salary)) |>
+  slice(1:32) |>
+  summarise(mean_salary = mean(salary, na.rm = TRUE))
+nfl_32
+ggplot(data = nfl_32, aes(x = year, y = mean_salary)) +
+  geom_line() +
+  facet_wrap(~ position)
 ```
 
 
