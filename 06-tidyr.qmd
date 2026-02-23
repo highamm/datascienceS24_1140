@@ -116,7 +116,7 @@ nfl_df
 ## and salary should be in its own column
 ```
 
-Your Turn 7.
+Your Turn 7 and 8.
 
 ```{r}
 nfl_long <- nfl_df |> pivot_longer(2:11, names_to = "position",
@@ -138,7 +138,7 @@ ggplot(data = nfl_max, aes(x = year, y = salary)) +
   geom_line(aes(group = position, colour = position))
 ```
 
-Your Turn 8. Re-make this plot but instead of max salary, we plot the average of the top 32 players for each position in each year.
+Your Turn 9. Re-make this plot but instead of max salary, we plot the average of the top 32 players for each position in each year.
 
 ```{r}
 nfl_32 <- nfl_long |> group_by(position, year) |>
@@ -150,6 +150,51 @@ ggplot(data = nfl_32, aes(x = year, y = mean_salary)) +
   geom_line() +
   facet_wrap(~ position)
 ```
+
+
+Your Turn 10.
+
+```{r}
+## inflation rate was 11.69%
+nfl_adj <- nfl_long |> filter(year == 2011 | year == 2018) |>
+  mutate(salary_adj = if_else(year == 2011,
+                              true = salary * 1.1169,
+                              false = salary)) |>
+  group_by(position, year) |>
+  arrange(desc(salary_adj)) |>
+  slice(1:32) |>
+  summarise(mean_salary = mean(salary_adj, na.rm = TRUE))
+  
+ggplot(data = nfl_adj, aes(x = year, y = mean_salary)) +
+  geom_line() +
+  facet_wrap(~position)
+```
+
+Your Turn 11.
+
+```{r}
+nfl_rank <- nfl_long |> filter(year == 2018) |>
+  group_by(position) |>
+  mutate(rank_salary = rank(desc(salary)))
+
+ggplot(data = nfl_rank, aes(x = rank_salary, y = salary)) +
+  geom_line(aes(colour = position), show.legend = FALSE) +
+  facet_wrap(~ position) +
+  theme_minimal() +
+  scale_colour_viridis_d()
+```
+
+```{r}
+library(babynames)
+babynames_10 <- babynames |> filter(year == 2017 & sex == "F") |>
+  arrange(desc(n)) |>
+  slice(1:10) |>
+  mutate(name2 = fct_reorder(name, n))
+babynames_10
+ggplot(babynames_10, aes(x = n, y = name2)) +
+  geom_col()
+```
+
 
 
 
