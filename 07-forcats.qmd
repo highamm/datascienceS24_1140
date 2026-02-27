@@ -1,0 +1,88 @@
+---
+title: "Section 7: Factors"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+```{r}
+library(tidyverse)
+library(here)
+pokemon_df <- read_csv(here("data/pokemon_allgen.csv")) |>
+  mutate(Generation_cat = factor(Generation))
+```
+
+Class Exercise 1. This is not appropriate since Defense is a quantitative variable (so we cannot see things like spread/variability, shape, outliers, sample size).
+
+These plots are appropriate for things like counts and totals of a categorical variable.
+
+Class Exercise 2. group_by(#) |> slice(1) |> ungroup() This works because we set up groups for each unique # and then slicing (1) keeps the first row for each unique #. 
+
+Alternatively:
+
+```{r}
+pokemon_df |> distinct(`#`, .keep_all = TRUE)
+## keeps one row per unique value(s) of the variable(s) you provide
+## equivalent to the slice(1) approach above.
+```
+
+Class Exercise 3.
+
+```{r}
+pokemon_nodup <- pokemon_df |> group_by(`#`) |> slice(1) |>
+   ungroup()
+pokemon_long <- pokemon_nodup |>
+  pivot_longer(c(`Type 1`, `Type 2`),
+               names_to = "Number",
+               values_to = "Type")
+
+pokemon_long <- pokemon_long |>
+  filter(!is.na(Type)) |>
+  mutate(Type_Deford = fct_reorder(.f = Type, .x = Defense,
+                                   .fun = median))
+ggplot(data = pokemon_long, aes(x = Type_Deford,
+                               y = Defense)) +
+  geom_boxplot() + 
+  coord_flip()
+## in general, forcats functions (especially fct_reorder() 
+## do not really work well with grouped data frames - so
+## will need to ungroup before running fct_reorder ).
+```
+
+Your Turn
+
+```{r}
+library(tidyverse)
+library(here)
+standings_df <- read_csv(here("data/standings.csv"))
+standings_df |> relocate(playoffs)
+```
+
+Your Turn 1.
+
+```{r}
+table(standings_df$team_name)
+```
+
+Your Turns 2 through 4
+```{r}
+standings_df <- standings_df |> mutate(team_name = fct_recode(team_name,
+                                              Commanders = "Redskins")) |>
+  unite("franchise", c(team, team_name), sep = " ")
+
+standings_clean <- standings_df |>
+  mutate(franchise = fct_collapse(franchise, `St. Louis LA Rams` = c("St. Louis Rams", "Los Angeles Rams"),
+                                  `San Diego LA Chargers` = c("San Diego Chargers", "Los Angeles Chargers")))
+standings_clean |> relocate(playoffs)
+
+```
+
+Your Turn 5.
+
+```{r}
+## one strategy: start with filtering to keep only the rows where the team made the playoffs
+## then we could group_by franchise and summarise to count up the number of times each
+## team appears in the playoffs data set.
+```
+
