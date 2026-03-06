@@ -74,11 +74,12 @@ medals_heat <- semi_join(medals_type, medals_total, join_by(country == country))
 medals_heat <- medals_heat |>
   ungroup() |>
   mutate(medal_type = fct_relevel(medal_type, c("Gold Medal", "Silver Medal", "Bronze Medal"))) |>
-  mutate(country = fct_reorder(country, n_medals))
+  mutate(country = fct_reorder(country, n_medals, .fun = sum))
 
 ggplot(data = medals_heat, aes(x = medal_type, y = country)) +
   geom_tile(aes(fill = n_medals)) +
-  scale_fill_viridis_c()
+  scale_fill_viridis_c() +
+  scale_x_discrete(position = "top")
 
 ```
 

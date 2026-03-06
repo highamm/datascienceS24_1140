@@ -1,0 +1,32 @@
+---
+title: "Section 8: Base R"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+Class Exercise 1.
+
+```{r}
+library(tidyverse)
+fitness_df <- read_csv(here("data/higham_fitness_notclean.csv"))
+fitness_df
+
+weekend_vec <- c("Sun", "Sat")
+weekday_vec <- c("Mon", "Tue", "Wed", "Thu", "Fri")
+
+fitness_df |> mutate(weekend_ind = case_when(weekday %in% weekend_vec ~ "weekend",
+                                             weekday %in% weekday_vec ~ "weekday")) |>
+  relocate(weekend_ind)
+
+## equivalent but mroe typing
+fitness_df |> mutate(weekend_ind = case_when(weekday == "Sat" | weekday == "Sun" ~ "weekend",
+                                             weekday == "Mon" | weekday == "Tue" | weekday == "Wed" | weekday == "Thu" | weekday == "Fri" ~ "weekday")) |>
+  relocate(weekend_ind)
+
+
+```
+
+x %in% c(1, 2, 3, 4) is equivalent to x == 1 | x == 2 | x == 3 | x == 4
+

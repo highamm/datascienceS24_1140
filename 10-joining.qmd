@@ -1,0 +1,24 @@
+---
+title: "Untitled"
+format: html
+---
+
+Class Exercise 0.
+
+a. 5 rows
+
+b. 6 rows.
+
+c. 8 rows.
+
+d. 3 rows (A, C, E).
+
+e. 3 rows.
+
+f. 2 rows.
+
+Your Turn 2.
+
+a. 6 rows.
+
+b. 8 rows (A, A, B, C, C, D, D, D)
