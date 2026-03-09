@@ -17,8 +17,67 @@ e. 3 rows.
 
 f. 2 rows.
 
+
+Class Exercise 1. To use bind_cols(), you must be sure that the order of the cases in each of the two data sets matches exactly.
+
+Class Exercise 2.
+
+```{r}
+library(tidyverse)
+library(here)
+slumajors_df <- read_csv(here("data/SLU_Majors_17_21.csv"))
+collegemajors_df <- read_csv(here("data/college-majors.csv"))
+glimpse(slumajors_df)
+glimpse(collegemajors_df)
+
+left_join(slumajors_df, collegemajors_df, join_by(Major == Major))
+## this does not work since the values for the keys in the two data
+## sets do not have the same syntax (title case vs. all caps).
+```
+
+
+
+Your Turn 1.
+
+a. true
+
+b. true. the full_ and left_ join will return at least the same rows as an inner_join and possibly others. 
+
+c. false. see Your Turns a and e for a counterexample.
+
+A, 5
+D, 6
+
+
+A, 1
+A, 0
+A, 4
+B, 5
+B, 6
+C. 6
+
+inner_join:
+A, 5, 1
+A, 5, 0
+A, 5, 4
+
+semi_join:
+A, 5
+
+
+
+
+
 Your Turn 2.
 
 a. 6 rows.
 
 b. 8 rows (A, A, B, C, C, D, D, D)
+
+c. 10 rows (A, A, B, C, C, D, D, D, F, F)
+
+d. 4 rows (A, A, C, C)
+
+e. 4 rows (A, A, C, C, yvar also gets dropped).
+
+f. 2 rows (F, F).
