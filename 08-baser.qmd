@@ -30,3 +30,32 @@ fitness_df |> mutate(weekend_ind = case_when(weekday == "Sat" | weekday == "Sun"
 
 x %in% c(1, 2, 3, 4) is equivalent to x == 1 | x == 2 | x == 3 | x == 4
 
+Class Exercise 3.
+
+```{r}
+grades_df <- structure(list(section = c(1030, 1030, 1030, 1030, 1030, 1030, 
+1030, 1030, 1030, 1030, 1030, 1030, 1030, 1030, 1030, 1030, 1030, 
+1030, 1030, 1030, 1030, 1030, 1030, 1030, 1030, 1140, 1140, 1140, 
+1140, 1140, 1140, 1140, 1140, 1140, 1140, 1140, 1140, 1140, 1140, 
+1140, 1140, 1140, 1140, 1140, 1140, 1140, 1140, 1140, 1140, 1140
+), grade = c("3.5", "3.5", "3.75", "2.5", "3.75", "3.75", "3", 
+"3.5", "4", "3.75", "3", "3.75", "3", "3", "3.25", "2.5", "3.25", 
+"3.5", "2.25", "4", "2.5", "3.75", "0", "4", "3.75", "3.25", 
+"4", "3.75", "2.75", "2.5", "3.75", "3.75", "3.5", "4", "3.25", 
+"3.75", "3.5", "1.75", "4", "3", "2.75", "0", "3.75", "3.5", 
+"3.75", "1.75", "3.5", "3.25", "3.25", "4")), class = c("tbl_df", 
+"tbl", "data.frame"), row.names = c(NA, -50L))
+
+grades_df
+## a and b
+grades_df |> mutate(grade = as.numeric(grade)) |>
+  group_by(section) |>
+  summarise(mean_grade = mean(grade))
+
+## c and d
+grades_clean <- grades_df |> mutate(grade = as.numeric(grade),
+                    section = as.factor(section))
+ggplot(data = grades_clean, aes(x = section, y = grade)) +
+  geom_boxplot()
+```
+

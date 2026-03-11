@@ -1,6 +1,9 @@
 ---
-title: "Untitled"
-format: html
+title: "Section 10: Joining"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
 ---
 
 Class Exercise 0.
@@ -36,8 +39,55 @@ left_join(slumajors_df, collegemajors_df, join_by(Major == Major))
 ```
 
 
+Class Exercise 3.
+
+```{r}
+library(tidyverse)
+library(here)
+mortality_df <- read_csv(here("data/gun_violence_us.csv"))
+mortality_df
+
+dc_df <- tibble(state = "DC", mortality_rate = 16.7,
+                ownership_rate = 0.087, region = "NE")
+dc_df
+
+all_df <- bind_rows(mortality_df, dc_df)
+```
+
+Class Exercises 4 through 8.
+
+```{r}
+df1 <- as_tibble(state.x77)
+df2 <- as_tibble(state.abb)
+df1
+df2
+
+## assuming that df1 and df2 have the same state order
+states_df <- bind_cols(df1, df2)
+
+## ce 5
+left_join(all_df, states_df, join_by(state == value))
+## OR
+full_join(all_df, states_df, join_by(state == value))
+
+## ce 6
+left_join(states_df, all_df, join_by(value == state))
+## OR
+inner_join(states_df, all_df, join_by(value == state))
+
+## ce 7
+ne_df <- all_df |> filter(region == "NE")
+semi_join(states_df, ne_df, join_by(value == state))
+
+## ce 8
+notne_df <- all_df |> filter(region != "NE")
+anti_join(states_df, notne_df, join_by(value == state))
+```
+
+
 
 Your Turn 1.
+
 
 a. true
 
