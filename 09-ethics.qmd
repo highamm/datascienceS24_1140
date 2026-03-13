@@ -6,3 +6,10 @@ format:
     embed-resources: true
 ---
 
+Class Exercise 1. If you fill out a survey or some other piece of information and you provide enough identifying information about yourself (e.g., providing year, gender, and major on slu's course evalaluation forms), then that can potentally get traced back to you (even though you didn't put your name on it so it's "anonymous").
+
+Class Exercise 2. (c) would be most okay to share since there is no sensitive information included. 
+
+(a) might be okay, if you assume that no one can ever access Canvas time. 
+
+(b) and (d) are not as great to share: they have potentially identifying information (see Class Exercise 1) and also have sensitive information in grade.
