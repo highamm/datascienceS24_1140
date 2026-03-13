@@ -59,3 +59,11 @@ ggplot(data = grades_clean, aes(x = section, y = grade)) +
   geom_boxplot()
 ```
 
+Class Exericse 4.
+
+
+the name of the winning player. `<chr>`: character (categorical and there are a lot of levels).
+the surface that the match was played on (Hard, Grass, Clay): `<fct>`: factor (there are few levels).
+the number of aces (unreturned serves) the winning player hit: `<int>` integer.
+the percentage of times the winning player made their first serve: `<dbl>`: continuous numeric variable.
+whether or not the winning player was currently ranked higher than the losing player: `<lgl>`: logical TRUE if higher, FALSE if lower.

@@ -131,3 +131,15 @@ d. 4 rows (A, A, C, C)
 e. 4 rows (A, A, C, C, yvar also gets dropped).
 
 f. 2 rows (F, F).
+
+Your Turn 4.
+
+left_join(courses_df, info_df): 300 rows.
+
+semi_join(info_df, courses_df): 5 rows (keep the rows corresponding to the 5 profs that are in courses_df).
+
+anti_join(courses_df, info_df). 285 rows (300 rows minus 15 rows that have the matching key in info_df).
+
+inner_join(courses_df, info_df). 15 rows (3 times 5: 15 rows for the 5 profs that appear in both data set- each prof has 3 courses).
+
+full_join(courses_df, info_df): 310 rows (15 from the inner_join plus the 285 from the coureses df without the matching key in info_df plus the 10 rows in info_df without the matching key in courses_df).

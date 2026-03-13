@@ -1,0 +1,8 @@
+---
+title: "Section 9: Data Ethics"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
