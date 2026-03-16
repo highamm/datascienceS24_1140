@@ -13,3 +13,18 @@ Class Exercise 2. (c) would be most okay to share since there is no sensitive in
 (a) might be okay, if you assume that no one can ever access Canvas time. 
 
 (b) and (d) are not as great to share: they have potentially identifying information (see Class Exercise 1) and also have sensitive information in grade.
+
+
+
+Your Turn 1. Hypothesis confirmation is all about setting up a single question of interest and evaluating that question with data (this is similar to a lot of what was done in STAT 113). Hypothesis generation/exploration is more about exploring many questions of interest with a single data set (this is similar to what we do in this class).
+
+Your Turn 2. For generation, as many times as you want. For confirmation, just once.
+
+Your Turn 3. 
+
+a. confirmation.
+
+b. generation (you have a lot of relatinships that you are exploring).
+
+c. more like generation (seasonal trends could be a wide variety of questions you are answering).
+
