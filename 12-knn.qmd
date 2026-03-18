@@ -1,0 +1,42 @@
+---
+title: "Section 12: Intro to Stat. Learning with knn"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+```{r}
+set.seed(1119)
+library(tidyverse)
+library(pander)
+library(here) 
+
+pokemon <- read_csv(here("data", "pokemon_full.csv")) |>
+  ## keeping the types we are interested in
+  filter(Type %in% c("Steel", "Dark", "Fire", "Ice")) |>
+  mutate(across(where(is.numeric), ~ (.x - min(.x)) /
+                                 (max(.x) - min(.x)))) 
+  ## scaling our candidate predictors so that they are all between 0 and 1
+  ## where(is.numeric) says to only apply the formula to columns that are numeric.
+pokemon
+```
+
+```{r}
+train_sample <- pokemon |>
+  slice_sample(n = 75)
+## randomly select 75 to be in our training sample
+test_sample <- anti_join(pokemon, train_sample)
+## all other pokemon (45) are in the test sample.
+```
+
+```{r}
+library(GGally)
+ggpairs(data = train_sample, columns = c(4, 5, 6, 3))
+## Defense looks like it will be useful to include in
+## an initial knn model because Steel types have higher
+## defense, on average, than the other types (not a lot of overlap in the boxplots)
+## HP and Attack might be useful, might not: we will see
+## once we know how to formally evaluate model performance.
+```
+
