@@ -101,5 +101,65 @@ test_sample |> mutate(type_ind = if_else(Type == "Fire",
 ```
 
 
+Exercise 8. Making k too small might mean that you leave your classifications up to chance (high variance model). but making k too large might mean that you are using pokemon that are not that related to your test pokemon (high bias model). 
 
+## Section 12.4
+
+```{r}
+library(tidyverse)
+
+pokemon <- read_csv(here::here("data/pokemon_full.csv")) |>
+  mutate(Type = as.factor(Type))
+set.seed(1119)
+
+## scale the quantitative predictors
+pokemon_scaled <- pokemon |>
+  mutate(across(where(is.numeric), ~ (.x - min(.x)) /
+                  (max(.x) - min(.x))))
+
+train_sample <- pokemon_scaled |>
+  slice_sample(n = 550)
+test_sample <- anti_join(pokemon_scaled, train_sample)
+
+library(kknn)
+
+knn_mod <- kknn(Type ~ HP + Attack + Defense + Speed + SpAtk + SpDef + height + weight,
+                train = train_sample, test = test_sample, k = 9)
+knn_mod
+
+tab <- table(knn_mod$fitted.values, test_sample$Type)
+sum(diag(tab)) / sum(tab)
+```
+
+```{r}
+get_class_rate <- function(k_val) {
+  knn_mod <- kknn(Type ~ HP + Attack + Defense + Speed + SpAtk + SpDef + height + weight,
+                  train = train_sample, test = test_sample, k = k_val)
+  
+  tab <- table(knn_mod$fitted.values, test_sample$Type)
+  class_rate <- sum(diag(tab)) / sum(tab)
+  
+  return(class_rate)
+}
+## one input called k_val
+## returns a classification rate
+get_class_rate(k_val = 20)
+
+k_vec <- 1:120
+class_rates <- map_dbl(k_vec, get_class_rate)
+## run get_class_rate with k_val = 1, then
+## run get_class_rate with k_val = 2, then ....
+## run get+class_rate with K_val = 120
+
+class_rate_df <- tibble(k_vec = k_vec, class_rates = class_rates)
+class_rate_df
+
+## construct a line plot looking at class_rate for different ks
+## write dplyr code to give you the k_value with the max classification rate.
+ggplot(data = class_rate_df, aes(x = k_vec, y = class_rates)) +
+  geom_line() +
+  theme_minimal()
+class_rate_df |> filter(class_rates == max(class_rates))
+## may choose k = 64
+```
 
