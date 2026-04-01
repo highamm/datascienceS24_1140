@@ -52,6 +52,51 @@ fitness_df <- read_csv(here::here("data/higham_fitness_notclean.csv"),
 fitness_df
 ```
 
+## Section 11.2: Web Scraping
+
+```{r}
+library(tidyverse)
+library(rvest)
+
+## provide the URL and name it something (in this case, url).
+url <- "https://en.wikipedia.org/wiki/Gun_violence_in_the_United_States_by_state"
+
+## read_html() convert the html code from the URL into something R can read
+tab <- read_html(url) |> 
+  html_nodes("table") ## html_nodes can grab only the tables 
+
+tab
+```
+
+```{r}
+test1 <- tab[[1]] |> html_table()
+test1
+ tab[[2]] |> html_table()
+
+```
+
+
+```{r}
+url <- "https://saintsathletics.com/sports/baseball/stats/2025"
+
+tab <- read_html(url) |> html_nodes("table")
+tab
+obj <- tab[[1]] |> html_table()
+obj
+obj2 <- tab[[2]] |> html_table()
+obj2
+```
+
+```{r}
+url_diversity <- "https://www.stlawu.edu/offices/institutional-research/student-diversity-2021"
+tab_diversity <- read_html(url_diversity) |> html_nodes("table")
+tab_diversity[[1]] |> html_table()
+```
+
+## Section 11.3
+
+Skipping.
+
 ## Class Exercises
 
 Class Exercise 1.
@@ -62,9 +107,38 @@ df <- read_delim(here("data/birthdays.txt"), delim = " - ",
                  skip = 4,
                  col_names = c("birthday", "name", "species",
                                "time"),
-                 na = c("?", "N/A", " ")) |>
+                 na = c("?", "N/A", " "),
+                 col_types = cols(
+                   birthday = col_character(), ## deal with dates with lubridate
+                   name = col_character(),
+                   species = col_factor(),
+                   time = col_character()
+                 )) |>
   mutate(time = parse_number(time)) ## let's us choose column names
 df
 ```
+
+Class Exercise 4.
+
+```{r}
+tennis_url <- "https://en.wikipedia.org/wiki/Current_tennis_rankings"
+
+tennis_tabs <- read_html(tennis_url) |> html_nodes("table")
+
+
+new_names <- c("number", "player", "points", "move")
+
+tennis_df <- tennis_tabs[[1]] |> html_table(header = FALSE) |>
+  set_names(new_names) |>
+  slice(-c(1:2))
+
+tennis_clean <- tennis_df |> mutate(points = parse_number(points)) |>
+  mutate(player = fct_reorder(player, points))
+
+ggplot(data = tennis_clean, aes(x = points, y = player)) +
+  geom_col(fill = "#CCFF00", colour = "black") +
+  theme_minimal()
+```
+
 
 
