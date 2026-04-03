@@ -1,0 +1,57 @@
+---
+title: "Section 13: Text and Strings"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+## Section 13.2: `stringr`
+
+Exercise 4.
+
+```{r}
+library(here)
+library(tidyverse)
+med_djok_df <- read_csv(here("data/med_djok.csv"),
+                        col_types = cols(isSvrWinner = col_factor()))
+med_djok_df
+med_djok_df <- med_djok_df |>
+  mutate(serve_location = case_when(str_detect(point, "^4") ~ "wide",
+                                    str_detect(point, "^5") ~ "body",
+                                    str_detect(point, "^6") ~ "down the center")) |>
+  relocate(serve_location, Serving, isSvrWinner)
+
+
+```
+
+Your Turns 1 - 3.
+
+
+```{r}
+ggplot(data = med_djok_df, aes(x = serve_location)) + 
+  geom_bar() +
+  facet_wrap(~ Serving)
+```
+
+Your Turn 2.
+
+```{r}
+ggplot(data = med_djok_df, aes(x = serve_location)) + 
+  geom_bar(aes(fill = isSvrWinner)) +
+  facet_wrap(~ Serving) +
+  scale_fill_viridis_d() +
+  theme_minimal() +
+  labs(fill = "Won Point")
+```
+
+Your Turn 3.
+
+```{r}
+med_djok_df |> 
+  mutate(is_volley = str_detect(point, pattern = "z|i|k|v")) |>
+  relocate(is_volley) |>
+  summarise(prop_volley = mean(is_volley))
+## 13.7% of all points in the match had a volley.
+```
+
