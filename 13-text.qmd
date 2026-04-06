@@ -25,6 +25,77 @@ med_djok_df <- med_djok_df |>
 
 ```
 
+Class Exercise 1.
+
+```{r}
+## install.packages("schrute")
+library(tidyverse)
+library(schrute)
+schrute::theoffice
+
+view(theoffice)
+```
+
+construct a plot that lets you explore the most common words that character said in the series.
+
+```{r}
+library(tidytext)
+office_jim <- theoffice |> filter(character == "Jim")
+
+jim_unnested <- office_jim |> unnest_tokens(output = "word", input = "text") |>
+  relocate(word)
+
+extra_stop_words <- tibble(word = c("yeah", "um", "uh"))
+all_stop_words <- bind_rows(stop_words, extra_stop_words)
+
+jim_joined <- anti_join(jim_unnested, all_stop_words, join_by(word == word))
+
+jim_20 <- jim_joined |> group_by(word) |>
+  summarise(total_spoken = n()) |>
+  arrange(desc(total_spoken)) |>
+  slice(1:20) |>
+  mutate(word = fct_reorder(word, total_spoken))
+
+ggplot(data = jim_20, aes(x = total_spoken, y = word)) +
+  geom_col(fill = "lightpink") +
+  theme_minimal()
+```
+
+, assess whether the character you chose seems to speak more or speak less, on average, from season to season.
+
+```{r}
+## can use number of words, number of non-stop words, or number of lines
+
+
+jim_season <- jim_unnested |> group_by(season) |>
+  summarise(spoken_words = n())
+
+ggplot(data = jim_season, aes(x = season, y = spoken_words)) +
+  geom_line() +
+  theme_minimal() +
+  ylim(c(0, NA))
+## flawed: different seasons have different number of episodes.
+
+## goal: adjust for the differing season lengths to make it
+## average number of words per episode in each season
+
+episodes_per_season <- jim_unnested |> group_by(season) |>
+  distinct(episode) |>
+  summarise(n_episodes = n())
+
+episodes_per_season
+jim_plot <- inner_join(jim_season, episodes_per_season, join_by(season == season)) |>
+  mutate(avg_words_per_episode = spoken_words / n_episodes) |>
+  mutate(season = as.factor(season))
+
+ggplot(data = jim_plot, aes(x = season, y = avg_words_per_episode)) +
+  geom_line(aes(group = 1)) + ## something special when making season a factor: can ask me later, but will not be assessed on group = 1
+  theme_minimal() +
+  ylim(c(0, NA))
+```
+
+
+
 Your Turns 1 - 3.
 
 
