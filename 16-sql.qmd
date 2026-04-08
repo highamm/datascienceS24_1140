@@ -1,0 +1,94 @@
+---
+title: "Section 16: Introduction to SQL"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+```{r}
+library(RSQLite)
+library(DBI) 
+library(dplyr)
+library(dbplyr)
+
+imdb_db <- dbConnect(RSQLite::SQLite(), 
+                     dbname = here::here("data/imdb_tv.sqlite"))
+
+dbListTables(conn = imdb_db)
+## show all of the data tables (data frames) stored in this database
+
+dbListFields(conn = imdb_db, name = "episode_rating")
+## shows the fields (variables) in the episode_rating table
+
+library(tidyverse)
+
+sql <- "
+  SELECT parentTconst, averageRating, numVotes
+  FROM show_ratings 
+  WHERE numVotes > 100000
+"
+
+dbGetQuery(imdb_db, sql) |>
+  as_tibble()
+
+## exercises 1 and 2
+## WHERE is similar to dplyr's filter()
+## SELECT is similar to dplyr's select()
+## FROM just tells SQL what data table we want to perform these
+## operations on.
+
+```
+
+## Section 16.2: `dbplyr`
+
+```{r}
+library(dbplyr)
+episode_rating_tbl <- tbl(imdb_db, "episode_rating")
+episode_rating_tbl
+## store the episode_rating data table as its own object
+## so that we can work with it in dbplyr
+
+## in this printout, we see the database location
+## we also see ?? for the number of rows because SQL
+## only runs the query on a subset of the data.
+```
+
+```{r}
+episode_query1 <- episode_rating_tbl |> 
+  filter(averageRating > 9.0) |> 
+  select(parentTconst, Episode_Name, numVotes, averageRating)
+episode_query1
+
+episode_query1 |> collect()
+## converts the data table to a tibble in R
+## and queries all of the rows.
+
+episode_query1 |>
+  show_query()
+
+mean_query1 <- episode_rating_tbl |>
+  group_by(parentTconst) |>
+  summarise(mean_rating = mean(averageRating)) |>
+  arrange(desc(mean_rating))
+mean_query1
+
+mean_query1 |> show_query()
+```
+
+Exercise 3.
+
+```{r}
+n_show_query <- episode_rating_tbl |>
+  group_by(parentTconst) |>
+  summarise(n_shows = n())
+n_show_query |> show_query()
+
+## group_by() in dplyr is similar to GROUP BY in SQL
+## summarise() in dplyr is similar to SELECT, where
+## COUNT(*) is like n() and then AS assigns a name to the summary variable
+```
+
+
+
+
