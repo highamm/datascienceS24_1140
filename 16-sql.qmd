@@ -89,6 +89,111 @@ n_show_query |> show_query()
 ## COUNT(*) is like n() and then AS assigns a name to the summary variable
 ```
 
+## Section 16.3: SQL Connections to `dplyr`
 
+* `SELECT` in SQL matches with:
+    * `select()`
+    * `rename()` (in SQL, SELECT OLDNAME AS NEWNAME)
+    * `mutate()` (in SQL, SELECT x + y AS xplusy)
+    * `summarise()` (IN SQL SELECT MEAN(x) AS mean_of_x)
+* `GROUP BY` in SQL matches with `group_by()`.
+* `WHERE` in SQL matches with `filter()`.
+* `ORDER BY` in SQL matches with `arrange()`.
+
+```{r}
+show_info_tbl <- tbl(imdb_db, "show_info")
+
+left_join(episode_rating_tbl, show_info_tbl,
+          join_by(parentTconst == parentTconst)) |>
+  show_query()
+```
+
+In SQL, the key is specified as ON (datatable1.key = datatable2.key) instead of `left_join(datatable1, datatable2, join_by(key == key))`
+
+Exercise 4.
+
+```{r}
+show_info_tbl |>
+  filter(Show_Name == "Ozark") |>
+  show_query()
+```
+
+Class Exercise 1.
+
+```{r}
+show_info_tbl |>
+ ## select(startYear, parentTconst, Show_Name) |>
+  rename(show_name = Show_Name) |>
+  arrange(desc(startYear)) |>
+  show_query()
+```
+
+Your Turns 1 through 4.
+
+```{r}
+episode_rating_tbl |>
+  group_by(parentTconst) |>
+  summarise(best_episode = max(averageRating, na.rm = TRUE)) |>
+  show_query()
+## summary functions in SELECT (MAX, MIN, MEDIAN, MEAN, COUNT, etc.)
+## get translated to summarise() in  dplyr.
+## things in SELECT like x * y or (z - w) / w get translated
+## to mutate() in dplyr.
+```
+
+
+Your Turn 2.
+
+
+```{r}
+#| error: true
+episode_rating_tbl |> mutate(test = fct_reorder(parentTconst,
+                                                averageRating))
+## cannot use lubridate, forcats, stringr, or other r specific
+## packages on database tables unless you collect() it first.
+```
+
+
+Your Turn 3.
+
+```{r}
+episode_rating_tbl |> filter(seasonNumber != "1") |>
+  show_query()
+## != is the same in both
+
+episode_rating_tbl |>
+  filter(seasonNumber %in% c("1", "2")) |>
+  show_query()
+## %in% gets translated to IN in SQL
+
+episode_rating_tbl |> distinct(parentTconst) |>
+  show_query()
+## distinct() gets translated to DISTINCT in SQL
+```
+
+YouR Turn 4.
+
+```{r}
+episode_rating_tbl |>
+  filter(seasonNumber == "1") |>
+  group_by(parentTconst) |>
+  summarise(n_episodes = n()) |>
+  arrange(desc(n_episodes)) |>
+  show_query()
+```
+
+```{r}
+imdb_df <- left_join(episode_rating_tbl, show_info_tbl,
+          join_by(parentTconst == parentTconst)) |>
+  collect()
+imdb_df$Show_Name |> unique()
+
+imdb_stranger <- imdb_df |> filter(Show_Name == "Stranger Things") |>
+  mutate(episodeNumber = as.numeric(episodeNumber))
+
+ggplot(data = imdb_stranger, aes(x = episodeNumber, y = averageRating)) +
+  geom_line() +
+  facet_wrap(~ seasonNumber)
+```
 
 
