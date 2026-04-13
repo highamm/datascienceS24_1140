@@ -1,0 +1,101 @@
+---
+title: "Section 14: Lubridate"
+author: "Matt Higham"
+format: 
+  html:
+    embed-resources: true
+---
+
+```{r}
+library(tidyverse)
+library(here)
+```
+
+Class Exercises
+
+Class Exercise 1 and 2.
+
+```{r}
+library(tidyverse)
+library(lubridate)
+ds_df <- read_csv(here("data/ds_google.csv"))
+ds_df
+
+ds_df <- ds_df |> mutate(search_date = ym(Month))
+ggplot(data = ds_df, aes(x = search_date, y = Data_Science)) +
+  geom_line() + 
+  geom_smooth()
+```
+
+Class Exercise 3.
+
+```{r}
+library(tidyquant)
+stocks_long <- tq_get(c("AAPL", "CMG", "NTDOY", "SPY", "GME"), get = "stock.prices")
+
+stocks_sp <- stocks_long |> filter(symbol == "GME")
+ggplot(data = stocks_sp, aes(x = date, y = close)) +
+  geom_line() +
+  theme_minimal()
+```
+
+Class Exercise 4.
+
+```{r}
+tibble(date = c("2024-01-01", "2024-01-02", "2024-01-03"),
+       closing_price = c(31, 43, 32)) |>
+  mutate(closing_lag = lag(closing_price))
+
+stocks_sp <- stocks_long |> filter(symbol == "SPY")
+## day to day
+stocks_sp |>
+  mutate(close_lag = lag(close)) |>
+  relocate(close, close_lag) |>
+  mutate(diff = close - close_lag) |>
+  relocate(diff) |>
+  mutate(is_higher = if_else(diff > 0, true = 1, false = 0)) |>
+  summarise(prop_higher = mean(is_higher, na.rm = TRUE))
+## the proportion of days where the S and P was higher than the prior
+## day is 0.551
+
+## week to week
+stocks_sp |>
+  mutate(weekday = wday(date, label = TRUE)) |>
+  filter(weekday == "Wed") |>
+  mutate(close_lag = lag(close)) |>
+  relocate(close, close_lag) |>
+  mutate(diff = close - close_lag) |>
+  relocate(diff) |>
+  mutate(is_higher = if_else(diff > 0, true = 1, false = 0)) |>
+  summarise(prop_higher = mean(is_higher, na.rm = TRUE))
+## 0.629 weeks were higher than the previous week.
+
+## month to month
+stocks_sp |>
+  mutate(day_of_month = mday(date)) |>
+  filter(day_of_month == 15) |>
+  mutate(close_lag = lag(close)) |>
+  relocate(close, close_lag) |>
+  mutate(diff = close - close_lag) |>
+  relocate(diff) |>
+  mutate(is_higher = if_else(diff > 0, true = 1, false = 0)) |>
+  summarise(prop_higher = mean(is_higher, na.rm = TRUE))
+## flawed: stock market does not run on weekends or holidays so we have
+## quite a few 2-month lags
+
+stocks_sp |>
+  mutate(month = month(date),
+         year = year(date)) |>
+  group_by(month, year) |>
+  slice(1) |>
+  ungroup() |>
+  arrange(date) |>
+  mutate(close_lag = lag(close)) |>
+  relocate(close, close_lag) |>
+  mutate(diff = close - close_lag) |>
+  relocate(diff) |>
+  mutate(is_higher = if_else(diff > 0, true = 1, false = 0)) |>
+  summarise(prop_higher = mean(is_higher, na.rm = TRUE))
+## about 2/3
+```
+
