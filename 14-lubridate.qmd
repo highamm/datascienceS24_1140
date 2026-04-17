@@ -99,3 +99,36 @@ stocks_sp |>
 ## about 2/3
 ```
 
+Your Turns
+
+Your Turn 1.
+
+```{r}
+swift_west_df <- read_csv(here::here("data/swift_west.csv"),
+                          skip = 2) |>
+  rename(date = Month,
+         swift = `Taylor Swift: (United States)`,
+         west = `kanye west: (United States)`)
+swift_west_df <- swift_west_df |>
+  mutate(date = ym(date))
+
+swift_west_long <- swift_west_df |>
+  mutate(swift = parse_number(swift)) |>
+  pivot_longer(c(swift, west), names_to = "term",
+               values_to = "popularity") 
+ggplot(data = swift_west_long, aes(x = date, y = popularity,
+                                   colour = term)) +
+  geom_line() +
+  scale_colour_viridis_d()
+```
+
+Your Turn 3.
+
+```{r}
+swift_west_long |>
+  mutate(year_var = year(date)) |>
+  group_by(year_var, term) |>
+  summarise(max_pop = max(popularity),
+            avg_pop = mean(popularity))
+```
+
