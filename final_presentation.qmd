@@ -18,13 +18,11 @@ When you click the **Render** button a document will be generated that includes:
 
 ## Subsequent Slides of Graphs or Tables
 
-When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
-
 ```{r}
-ggplot(data = swift_west_long, aes(x = date, y = popularity,
-                                   colour = term)) +
-  geom_line() +
-  scale_colour_viridis_d()
+library(tidyverse)
+ggplot(data = mtcars, aes(x = mpg)) +
+  geom_histogram(colour  ="black", fill = "skyblue") +
+  theme_minimal(base_size = 22)
 ```
 
 
